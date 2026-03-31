@@ -16,8 +16,6 @@ const { eyebrow, headline, lede } = Astro.props;
       {lede && <p class="lede">{lede}</p>}
       <slot name="actions" />
     </div>
-    <aside class="page-hero-aside">
-      <slot name="aside" />
-    </aside>
+    
   </div>
 </header>
