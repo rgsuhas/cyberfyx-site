@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     debug: bool = False
     app_name: str = "Cyberfyx Backend"
     database_url: str = "sqlite:///./cyberfyx.db"
-    cors_origins: str = "http://127.0.0.1:8080,http://localhost:8080"
+    cors_origins: str = "http://127.0.0.1:4321,http://localhost:4321,http://127.0.0.1:8080,http://localhost:8080"
     enable_internal_api: bool = False
 
     jwt_secret_key: str = "replace-me"

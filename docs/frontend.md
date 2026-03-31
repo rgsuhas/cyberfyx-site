@@ -46,9 +46,13 @@ The site uses a custom-built design system with:
 
 ## Configuration & Setup
 
-1. **Environment Variables**: Use `.env` to configure the backend API location.
+1. **Environment Variables**: Use `frontend-astro/.env` to configure FastAPI integration.
    ```env
-   PUBLIC_API_BASE=http://localhost:8000
+   # Used by build/runtime fetches from Astro frontmatter.
+   PUBLIC_API_BASE=http://127.0.0.1:8000
+
+   # Used in local `npm run dev` so `/api/*` is proxied to FastAPI.
+   API_PROXY_TARGET=http://127.0.0.1:8000
    ```
 2. **Commands**:
    - `npm install`: Install dependencies.
