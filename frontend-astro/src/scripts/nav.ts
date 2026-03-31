@@ -38,10 +38,9 @@ function initNav() {
     navMenu?.classList.toggle('active');
     document.body.classList.toggle('menu-open');
     // Toggle icon
-    const icon = mobileMenuBtn.querySelector('i');
+    const icon = mobileMenuBtn.querySelector<HTMLElement>('.mobile-menu-icon');
     if (icon) {
-      icon.classList.toggle('fa-bars');
-      icon.classList.toggle('fa-xmark');
+      icon.textContent = navMenu?.classList.contains('active') ? '✕' : '☰';
     }
   });
 
@@ -50,10 +49,9 @@ function initNav() {
     link.addEventListener('click', () => {
       navMenu.classList.remove('active');
       document.body.classList.remove('menu-open');
-      const icon = mobileMenuBtn?.querySelector('i');
+      const icon = mobileMenuBtn?.querySelector<HTMLElement>('.mobile-menu-icon');
       if (icon) {
-        icon.classList.add('fa-bars');
-        icon.classList.remove('fa-xmark');
+        icon.textContent = '☰';
       }
     });
   });

@@ -93,3 +93,17 @@ def test_solution_tracks_list_and_detail_hide_drafts(client, seeded_db):
     assert track["title"] == "Endpoint operations"
     assert extract_collection_items(track["offerings"])
     assert extract_collection_items(track["endpoint_rows"])
+
+
+def test_cors_preflight_rejects_unconfigured_origin(client):
+    response = client.options(
+        "/api/v1/public/inquiries",
+        headers={
+            "Origin": "https://malicious.example",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.headers.get("access-control-allow-origin") is None

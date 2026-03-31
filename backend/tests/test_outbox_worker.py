@@ -37,3 +37,24 @@ def test_outbox_worker_completes_pending_inquiry_notifications_without_smtp(clie
     assert created_event.status == OutboxStatus.completed
     assert created_event.processed_at is not None
     assert created_event.last_error is None
+
+
+def test_outbox_worker_skips_events_that_reach_max_attempts(db_session):
+    from app.services.outbox import MAX_ATTEMPTS
+
+    event = OutboxEvent(
+        topic="missing.topic",
+        payload={"sample": True},
+        status=OutboxStatus.pending,
+        attempts=MAX_ATTEMPTS,
+    )
+    db_session.add(event)
+    db_session.commit()
+
+    processed = process_pending_outbox_events(db_session, handlers=get_outbox_handlers())
+
+    assert processed == []
+    db_session.refresh(event)
+    assert event.status == OutboxStatus.failed
+    assert event.attempts == MAX_ATTEMPTS
+    assert "max attempts" in (event.last_error or "")

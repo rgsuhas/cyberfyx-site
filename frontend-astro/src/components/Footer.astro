@@ -46,19 +46,19 @@ const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
         <h4 class="footer-heading">Contact Us</h4>
         <ul class="footer-links footer-contact">
           <li>
-            <i class="fa-solid fa-location-dot"
+            <span class="footer-icon"
                onclick={`window.open('${profile.map_url}', '_blank')`}
-               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;"></i>
+               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;" aria-hidden="true">📍</span>
             <span set:html={profile.headquarters_address.replace(', ', ',<br>')}></span>
           </li>
           <li>
-            <i class="fa-solid fa-envelope" style="margin-top: 5px; color: var(--accent-primary);"></i>
+            <span class="footer-icon" style="margin-top: 5px; color: var(--accent-primary);" aria-hidden="true">✉</span>
             <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${profile.sales_email}`} target="_blank">
               {profile.sales_email}
             </a>
           </li>
           <li>
-            <i class="fa-solid fa-phone" style="margin-top: 5px; color: var(--accent-primary);"></i>
+            <span class="footer-icon" style="margin-top: 5px; color: var(--accent-primary);" aria-hidden="true">☎</span>
             <a href={`tel:${profile.primary_phone.replace(/\s/g, '')}`}>{profile.primary_phone}</a>
           </li>
         </ul>
@@ -73,7 +73,7 @@ const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
 
 <!-- Back to Top Button -->
 <a href="#" id="back-to-top" class="back-to-top" aria-label="Back to Top">
-  <i class="fa-solid fa-arrow-up"></i>
+  <span aria-hidden="true">↑</span>
 </a>
 
 <style>
@@ -92,5 +92,11 @@ const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
     border: 1px solid var(--border-glass);
     color: var(--text-muted);
     background: var(--bg-glass);
+  }
+  .footer-icon {
+    display: inline-flex;
+    width: 1rem;
+    justify-content: center;
+    font-size: 0.9rem;
   }
 </style>

@@ -19,7 +19,7 @@ const isActive = (path: string) => {
           <a href="/" class={`nav-link ${isActive('')}`}>Home</a>
           <a href="/about" class={`nav-link ${isActive('about')}`}>About</a>
           <div class="nav-item has-dropdown">
-              <a href="/services" class={`nav-link ${isActive('services')}`}>Services <i class="fa-solid fa-chevron-down" style="font-size: 0.7em; margin-left: 3px; transition: transform 0.2s;"></i></a>
+              <a href="/services" class={`nav-link ${isActive('services')}`}>Services <span class="dropdown-chevron" aria-hidden="true" style="font-size: 0.7em; margin-left: 3px; transition: transform 0.2s; display:inline-block;">▾</span></a>
               <div class="dropdown-menu">
                   <a href="/services" class="dropdown-item">All Services</a>
                   <a href="/services/cybersecurity" class="dropdown-item">Cybersecurity</a>
@@ -37,7 +37,7 @@ const isActive = (path: string) => {
       <div class="nav-actions">
           <a href="/contact" class="btn btn-quote">Get Quote</a>
           <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle menu">
-              <i class="fa-solid fa-bars"></i>
+              <span class="mobile-menu-icon" aria-hidden="true">☰</span>
           </button>
       </div>
   </div>
