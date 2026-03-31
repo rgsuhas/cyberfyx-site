@@ -1,4 +1,14 @@
 ---
+interface InterestOption {
+  slug: string;
+  label: string;
+}
+
+interface Props {
+  interestOptions?: InterestOption[];
+}
+
+const { interestOptions = [] } = Astro.props;
 ---
 <div class="contact-form-card fade-up delay-100">
   <div class="contact-form-header">
@@ -26,12 +36,9 @@
     <div class="cf-field cf-select-field">
       <select id="subject" name="subject" class="cf-input cf-select" required>
         <option value="" disabled selected></option>
-        <option value="cybersecurity-services">Cybersecurity</option>
-        <option value="it-security-and-continuity">IT Security</option>
-        <option value="endpoint-management-services">Endpoint Management</option>
-        <option value="core-industry-services">Core Industry Services</option>
-        <option value="training">Training</option>
-        <option value="general-inquiry">General Inquiry</option>
+        {interestOptions.map((opt) => (
+          <option value={opt.slug}>{opt.label}</option>
+        ))}
       </select>
       <label for="subject" class="cf-label">Service Interested In</label>
       <span class="cf-bar"></span>

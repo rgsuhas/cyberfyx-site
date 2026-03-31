@@ -1,6 +1,26 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactForm from '../components/contact/ContactForm.astro';
+import { fetchContactProfile } from '../lib/api';
+
+const FALLBACK_CONTACT = {
+  sales_email: 'sales@cyberfyx.net',
+  primary_phone: '+91 9663410308',
+  headquarters_name: 'Cyberfyx Headquarters',
+  headquarters_address: 'Janardhana Towers, Ashok Nagar, Bengaluru 560025',
+  map_url: 'https://maps.google.com/?q=Janardhana+Towers+Ashok+Nagar+Bengaluru+560025',
+  interest_options: [
+    { slug: 'cybersecurity-services', label: 'Cybersecurity' },
+    { slug: 'it-security-and-continuity', label: 'IT Security' },
+    { slug: 'endpoint-management-services', label: 'Endpoint Management' },
+    { slug: 'core-industry-services', label: 'Core Industry Services' },
+    { slug: 'training', label: 'Training' },
+    { slug: 'general-inquiry', label: 'General Inquiry' },
+  ],
+};
+
+const profile = (await fetchContactProfile()) ?? FALLBACK_CONTACT;
+const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
 ---
 
 <BaseLayout 
@@ -18,7 +38,10 @@ import ContactForm from '../components/contact/ContactForm.astro';
                 <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">📍</div>
                 <div>
                     <h4 class="mb-1">Office Location</h4>
-                    <p>Janardhana Towers, Ashok Nagar<br>Bengaluru 560025</p>
+                    <p>
+                      <a href={profile.map_url} target="_blank" rel="noopener noreferrer">{profile.headquarters_name}</a><br />
+                      {profile.headquarters_address}
+                    </p>
                 </div>
             </div>
 
@@ -26,7 +49,7 @@ import ContactForm from '../components/contact/ContactForm.astro';
                 <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">📞</div>
                 <div>
                     <h4 class="mb-1">Phone Number</h4>
-                    <p><a href="tel:+919663410308">+91 9663410308</a></p>
+                    <p><a href={telHref}>{profile.primary_phone}</a></p>
                 </div>
             </div>
 
@@ -34,12 +57,12 @@ import ContactForm from '../components/contact/ContactForm.astro';
                 <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">✉️</div>
                 <div>
                     <h4 class="mb-1">Email Address</h4>
-                    <p><a href="mailto:sales@cyberfyx.net">sales@cyberfyx.net</a></p>
+                    <p><a href={`mailto:${profile.sales_email}`}>{profile.sales_email}</a></p>
                 </div>
             </div>
         </div>
 
-        <ContactForm />
+        <ContactForm interestOptions={profile.interest_options} />
 
       </div>
     </div>
