@@ -48,8 +48,10 @@ cyberfyx_backend_test.egg-info/SOURCES.txt
 cyberfyx_backend_test.egg-info/dependency_links.txt
 cyberfyx_backend_test.egg-info/requires.txt
 cyberfyx_backend_test.egg-info/top_level.txt
+tests/test_catalog_api.py
 tests/test_health_and_site.py
 tests/test_internal_inquiries.py
 tests/test_internal_staff.py
 tests/test_outbox_worker.py
 tests/test_public_inquiries.py
+tests/test_utm_inquiry.py
