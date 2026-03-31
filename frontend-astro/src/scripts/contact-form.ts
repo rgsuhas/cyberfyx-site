@@ -59,6 +59,8 @@ function initContactForm() {
   const subjectSel  = document.getElementById('subject')       as HTMLSelectElement | null;
 
   if (!form || !statusDiv || !submitBtn) return;
+  if (form.dataset.cfInit) return;
+  form.dataset.cfInit = '1';
 
   const submitText = submitBtn.querySelector('.cf-submit-text') as HTMLElement | null;
 
