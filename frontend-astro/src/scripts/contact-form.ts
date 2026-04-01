@@ -52,6 +52,50 @@ function getTrackingFields() {
   };
 }
 
+function setStatus(
+  statusDiv: HTMLDivElement,
+  kind: 'success' | 'error',
+  message: string,
+  allowHtml = false,
+) {
+  if (allowHtml) {
+    statusDiv.innerHTML = message;
+  } else {
+    statusDiv.textContent = message;
+  }
+
+  statusDiv.style.backgroundColor =
+    kind === 'success' ? 'rgba(98, 151, 132, 0.1)' : 'rgba(255, 107, 53, 0.1)';
+  statusDiv.style.color = kind === 'success' ? 'var(--accent-soft)' : 'var(--accent-tertiary)';
+  statusDiv.style.display = 'block';
+}
+
+function getStringField(formData: FormData, name: string) {
+  const value = formData.get(name);
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+async function getErrorMessage(response: Response) {
+  try {
+    const payload = await response.json();
+    const detailMessages = Array.isArray(payload?.error?.details)
+      ? payload.error.details
+          .map((detail: { message?: unknown }) => (typeof detail?.message === 'string' ? detail.message : ''))
+          .filter(Boolean)
+      : [];
+
+    if (typeof payload?.error?.message === 'string' && payload.error.message) {
+      return detailMessages.length > 0
+        ? `${payload.error.message} ${detailMessages.join(' ')}`
+        : payload.error.message;
+    }
+  } catch {
+    // Ignore non-JSON error bodies and fall through to the generic message.
+  }
+
+  return `There was an error submitting your request (${response.status}).`;
+}
+
 function initContactForm() {
   const form        = document.getElementById('contact-form')  as HTMLFormElement | null;
   const statusDiv   = document.getElementById('form-status')   as HTMLDivElement | null;
@@ -74,45 +118,61 @@ function initContactForm() {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    statusDiv.style.display = 'none';
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const fd = new FormData(form);
+    const payload = {
+      name: getStringField(fd, 'name'),
+      email: getStringField(fd, 'email'),
+      interest_slug: getStringField(fd, 'subject'),
+      message: getStringField(fd, 'message'),
+      ...getTrackingFields(),
+    };
+
+    if (!payload.name || !payload.email || !payload.interest_slug || !payload.message) {
+      setStatus(statusDiv, 'error', 'Please complete all required fields before submitting.');
+      return;
+    }
 
     submitBtn.disabled = true;
     if (submitText) submitText.textContent = 'Submitting...';
-    statusDiv.style.display = 'none';
 
     try {
-      const fd = new FormData(form);
-      const payload = {
-        name:         fd.get('name'),
-        email:        fd.get('email'),
-        interest_slug: fd.get('subject'),
-        message:      fd.get('message'),
-        ...getTrackingFields(),
-      };
-
       const response = await fetch(`${apiBase}/api/v1/public/inquiries`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
+        const responseBody = await response.json().catch(() => null);
         form.reset();
         if (subjectSel) loadInterestOptions(apiBase, subjectSel);
-        statusDiv.textContent = 'Thank you! Your inquiry has been submitted successfully.';
-        statusDiv.style.backgroundColor = 'rgba(98, 151, 132, 0.1)';
-        statusDiv.style.color = 'var(--accent-soft)';
-        statusDiv.style.display = 'block';
+        setStatus(
+          statusDiv,
+          'success',
+          typeof responseBody?.message === 'string' && responseBody.message
+            ? responseBody.message
+            : 'Thank you! Your inquiry has been submitted successfully.',
+        );
       } else {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(await getErrorMessage(response));
       }
     } catch (err) {
       console.error('Submission error:', err);
-      statusDiv.innerHTML =
-        'There was an error submitting your request. ' +
-        'Please try again or <a href="mailto:sales@cyberfyx.net">email us directly</a>.';
-      statusDiv.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
-      statusDiv.style.color = 'var(--accent-tertiary)';
-      statusDiv.style.display = 'block';
+      const message =
+        err instanceof Error && err.message
+          ? `${err.message} If the issue continues, <a href="mailto:sales@cyberfyx.net">email us directly</a>.`
+          : 'There was an error submitting your request. Please try again or <a href="mailto:sales@cyberfyx.net">email us directly</a>.';
+      setStatus(statusDiv, 'error', message, true);
     } finally {
       submitBtn.disabled = false;
       if (submitText) submitText.textContent = 'Send Message';

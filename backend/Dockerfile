@@ -7,12 +7,10 @@ ENV CYBERFYX_RUN_SEED_ON_START=true
 
 WORKDIR /app
 
-COPY backend/pyproject.toml backend/README.md ./
-COPY backend/app ./app
-COPY frontend ./frontend
-COPY backend/alembic.ini ./
-COPY backend/alembic ./alembic
-COPY backend/scripts ./scripts
+COPY pyproject.toml README.md ./
+COPY app ./app
+COPY alembic ./alembic
+COPY scripts ./scripts
 
 RUN python -m pip install --upgrade pip && \
     python -m pip install . && \

@@ -1,9 +1,11 @@
+import re
+from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
 
 from app.api.router import api_router
 from app.core.config import get_settings
@@ -12,6 +14,59 @@ from app.core.errors import AppError, register_error_handlers
 from app.services.site import resolve_frontend_root
 
 settings = get_settings()
+API_BASE_META_RE = re.compile(
+    r'(<meta\s+name=["\']cyberfyx-api-base["\']\s+content=["\'])([^"\']*)(["\'])',
+    flags=re.IGNORECASE,
+)
+
+
+def _within_frontend_root(frontend_root: Path, candidate: Path) -> bool:
+    try:
+        candidate.resolve().relative_to(frontend_root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _rewrite_api_base_meta(raw_html: str) -> str:
+    return API_BASE_META_RE.sub(r'\1\3', raw_html)
+
+
+def _safe_frontend_relative_path(request_path: str) -> Path | None:
+    normalized = unquote(request_path).strip("/")
+    if not normalized:
+        return Path()
+
+    relative = PurePosixPath(normalized)
+    if any(part in {".", ".."} for part in relative.parts):
+        return None
+
+    return Path(*relative.parts)
+
+
+def _resolve_frontend_document(frontend_root: Path, request_path: str) -> Path | None:
+    relative = _safe_frontend_relative_path(request_path)
+    if relative is None:
+        return None
+
+    candidates = [frontend_root / relative]
+    if not relative.suffix:
+        candidates.append(frontend_root / relative / "index.html")
+        candidates.append(frontend_root / f"{relative}.html")
+
+    for candidate in candidates:
+        if candidate.is_file() and _within_frontend_root(frontend_root, candidate):
+            return candidate
+
+    return None
+
+
+def _frontend_response(frontend_root: Path, document: Path) -> FileResponse | HTMLResponse:
+    if document.suffix.lower() == ".html":
+        raw_html = document.read_text(encoding="utf-8", errors="ignore")
+        return HTMLResponse(_rewrite_api_base_meta(raw_html))
+
+    return FileResponse(document)
 
 
 def _register_frontend(app: FastAPI) -> None:
@@ -19,23 +74,26 @@ def _register_frontend(app: FastAPI) -> None:
     if frontend_root is None:
         return
 
-    assets_dir = frontend_root / "assets"
-    pages_dir = frontend_root / "pages"
+    frontend_root = frontend_root.resolve()
 
-    if assets_dir.is_dir():
-        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="frontend-assets")
-    if pages_dir.is_dir():
-        app.mount("/pages", StaticFiles(directory=str(pages_dir)), name="frontend-pages")
+    @app.get("/pages/{page_path:path}", include_in_schema=False)
+    def legacy_frontend_page(page_path: str) -> FileResponse:
+        normalized = page_path.strip("/")
+        if not normalized.endswith(".html"):
+            raise HTTPException(status_code=404)
 
-    index_file = frontend_root / "index.html"
+        html_target = _resolve_frontend_document(frontend_root, normalized[:-5])
+        if html_target is None:
+            raise HTTPException(status_code=404)
 
-    @app.get("/", include_in_schema=False)
-    def frontend_index() -> FileResponse:
-        return FileResponse(index_file)
+        return _frontend_response(frontend_root, html_target)
 
-    @app.get("/index.html", include_in_schema=False)
-    def frontend_index_html() -> FileResponse:
-        return FileResponse(index_file)
+    @app.get("/{frontend_path:path}", include_in_schema=False)
+    def frontend_content(frontend_path: str):
+        document = _resolve_frontend_document(frontend_root, frontend_path)
+        if document is None:
+            raise HTTPException(status_code=404)
+        return _frontend_response(frontend_root, document)
 
 
 def create_app() -> FastAPI:

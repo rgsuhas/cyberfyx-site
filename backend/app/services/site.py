@@ -34,6 +34,7 @@ def get_public_contact_profile(session: Session) -> ContactProfile:
 
 def resolve_frontend_root() -> Path | None:
     candidates = (
+        BACKEND_ROOT.parent / "frontend-astro" / "dist",
         BACKEND_ROOT / "frontend",
         BACKEND_ROOT.parent / "frontend",
     )
@@ -58,6 +59,44 @@ def _extract_page_text(raw_html: str) -> str:
     return " ".join(unescape(without_tags).split())
 
 
+def _iter_search_documents(frontend_root: Path) -> list[Path]:
+    documents: list[Path] = []
+    root_index = frontend_root / "index.html"
+    if root_index.is_file():
+        documents.append(root_index)
+
+    for document in sorted(frontend_root.rglob("index.html"), key=lambda path: path.as_posix().lower()):
+        if document == root_index:
+            continue
+        relative_parts = document.relative_to(frontend_root).parts
+        if any(part.startswith("_") for part in relative_parts):
+            continue
+        documents.append(document)
+
+    return documents
+
+
+def _document_href(frontend_root: Path, document: Path) -> str:
+    relative_path = document.relative_to(frontend_root).as_posix()
+    if relative_path == "index.html":
+        return "/"
+
+    if relative_path.endswith("/index.html"):
+        return f"/{relative_path[:-11].strip('/')}"
+
+    return f"/{relative_path}"
+
+
+def _document_section(document: Path, href: str) -> str:
+    if href == "/":
+        return "Home"
+
+    if document.name == "index.html" and len(document.parts) >= 2:
+        return document.parent.name.replace("-", " ").title()
+
+    return document.stem.replace("-", " ").title()
+
+
 def list_public_search_entries() -> list[dict[str, str]]:
     frontend_root = resolve_frontend_root()
     if frontend_root is None:
@@ -67,10 +106,7 @@ def list_public_search_entries() -> list[dict[str, str]]:
             status_code=503,
         )
 
-    documents = [frontend_root / "index.html"]
-    pages_dir = frontend_root / "pages"
-    if pages_dir.is_dir():
-        documents.extend(sorted(pages_dir.glob("*.html"), key=lambda path: path.name.lower()))
+    documents = _iter_search_documents(frontend_root)
 
     entries: list[dict[str, str]] = []
     for document in documents:
@@ -78,13 +114,13 @@ def list_public_search_entries() -> list[dict[str, str]]:
             continue
 
         raw_html = document.read_text(encoding="utf-8", errors="ignore")
-        relative_href = document.relative_to(frontend_root).as_posix()
-        fallback_title = "Cyberfyx" if relative_href == "index.html" else document.stem.replace("-", " ").title()
-        section = "Home" if relative_href == "index.html" else document.stem.replace("-", " ").title()
+        href = _document_href(frontend_root, document)
+        fallback_title = "Cyberfyx" if href == "/" else _document_section(document, href)
+        section = _document_section(document, href)
 
         entries.append(
             {
-                "href": relative_href,
+                "href": href,
                 "title": _extract_title(raw_html, fallback=fallback_title),
                 "section": section,
                 "text": _extract_page_text(raw_html),

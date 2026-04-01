@@ -11,8 +11,8 @@ const isActive = (path: string) => {
 
 <header id="header" class="site-header">
   <div class="container nav-container">
-      <a href="/" class="logo" style="text-decoration: none; color: inherit; font-weight: bold; font-size: 1.5rem;">
-          <span style="font-family: var(--font-primary);">CYBER<span style="color: var(--logo-text-accent);">FYX</span></span>
+      <a href="/" class="logo" aria-label="Cyberfyx home">
+          <img src="/logo.png" alt="Cyberfyx" class="logo-img" />
       </a>
 
       <nav id="nav-menu" class="nav-menu">
@@ -35,6 +35,25 @@ const isActive = (path: string) => {
       </nav>
 
       <div class="nav-actions">
+          <div id="site-search" class="site-search" role="search">
+              <div class="site-search-inline">
+                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                  <input
+                      id="site-search-input"
+                      class="site-search-input"
+                      type="search"
+                      placeholder="Search Cyberfyx"
+                      aria-label="Search Cyberfyx"
+                      autocomplete="off"
+                      spellcheck="false"
+                  />
+              </div>
+              <div class="site-search-dropdown" id="site-search-dropdown">
+                  <div id="site-search-results" class="site-search-results">
+                      <div class="site-search-empty">Type at least 2 letters to search.</div>
+                  </div>
+              </div>
+          </div>
           <a href="/contact" class="btn btn-quote">Get Quote</a>
           <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle menu">
               <i class="fa-solid fa-bars"></i>

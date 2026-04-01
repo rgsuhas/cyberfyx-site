@@ -10,19 +10,24 @@ Follow these steps to get the Cyberfyx project (both backend and frontend) runni
 
 ---
 
-## Quick Start via Helper Scripts
+## Quick Start
 
 Run from the repository root:
 
 ```bash
-./runall.sh
+npm start
 ```
 
-This starts the local development stack. To stop everything started by the script:
+This starts the local development stack in one terminal:
 
-```bash
-./kill.sh
-```
+- Astro frontend
+- FastAPI backend
+- outbox worker
+
+Stop everything with `Ctrl+C`.
+
+If you prefer the older Bash helpers, `./runall.sh` and `./kill.sh` are still available.
+If a default dev port is already occupied, the root starter will choose the next free local port and print the URL it selected.
 
 ---
 
@@ -105,9 +110,9 @@ To verify everything is working:
 
 ---
 
-## 4. Running the Worker (Optional)
+## 4. Running the Worker Manually
 
-To process background tasks like email notifications, start the outbox worker:
+`npm start` already runs the outbox worker. If you need to run it separately:
 
 ```bash
 cd backend

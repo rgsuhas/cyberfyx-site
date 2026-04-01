@@ -1,51 +1,74 @@
 # Cyberfyx Website
 
-Building the next-generation website for Cyberfyx with a high-performance **Astro 4.x** frontend and a robust **FastAPI** backend.
+Building the Cyberfyx site with an Astro frontend and a FastAPI backend.
 
 ## Overview
 
-The Cyberfyx website project is a secure, decoupled web application. It delivers a blazing-fast, SEO-optimized user experience while maintaining a professional and administrative-ready backend.
+The repository is a decoupled web app with three local runtime parts:
 
-- **🚀 Frontend**: Built with [Astro](https://astro.build/) for high-end Core Web Vitals and SEO.
-- **⚙️ Backend**: Built with [FastAPI](https://fastapi.tiangolo.com/) for reliable data handling and lead routing.
+- `frontend-astro/` for the Astro site
+- `backend/` for the FastAPI API and database
+- a backend outbox worker for background notification processing
 
 ## Navigation
 
-- **[Architecture](docs/architecture.md)**: Explore the high-level system design.
-- **[Backend Guide](docs/backend.md)**: Deep dive into the API, database, and background workers.
-- **[Frontend Guide](docs/frontend.md)**: Details on the design system, animations, and Astro configuration.
-- **[Getting Started](docs/getting-started.md)**: Step-by-step instructions for local development.
+- [Architecture](docs/architecture.md)
+- [Backend Guide](docs/backend.md)
+- [Frontend Guide](docs/frontend.md)
+- [Getting Started](docs/getting-started.md)
 
 ## Project Structure
 
 ```text
-/                   # Root project folder
-├── backend/        # FastAPI application (FastAPI, SQLAlchemy, Alembic)
-├── frontend-astro/ # Astro static site generator (Astro, Vanilla TS, CSS)
-├── docs/           # Comprehensive documentation suite
-└── README.md       # Project entry point
+/
+|-- backend/
+|-- frontend-astro/
+|-- docs/
+|-- package.json
+`-- scripts/
 ```
 
 ## Quick Start
 
-To get up and running quickly:
-1. **Backend**: `cd backend && pip install -e .[dev] && uvicorn app.main:app --reload`
-2. **Frontend**: `cd frontend-astro && npm install && npm run dev`
+Run this from the repository root:
 
-## One-command local run (script-based)
+```bash
+npm start
+```
 
-Use these helper scripts from the repository root to run the full local stack:
+That single command prepares the local environment and starts:
 
-- `./runall.sh` — starts backend + frontend local development processes.
-- `./kill.sh` — stops processes started by `./runall.sh`.
+- the FastAPI backend on `http://localhost:8000`
+- the Astro frontend on `http://localhost:4321`
+- the backend outbox worker
 
-## Run Scripts
+Open `http://localhost:8000/docs` for the API docs.
+If either default port is already busy, the starter automatically picks the next free local port and prints it in the terminal.
 
-The frontend now has standard npm scripts you can use throughout development:
+## What `npm start` does
 
-- `npm run dev` — start the Astro dev server.
-- `npm run build` — run checks and build a production bundle.
-- `npm run preview` — preview the production build locally.
-- `npm run astro -- <args>` — run Astro CLI commands.
+The root starter script:
 
-For a full backend/frontend local workflow (including migrations and seed data), use the commands in **[Getting Started](docs/getting-started.md)**.
+- ensures backend and frontend `.env` files exist
+- creates the backend virtual environment if needed
+- installs backend and frontend dependencies when needed
+- runs backend migrations and seed data
+- starts the API, worker, and frontend in one terminal
+
+Stop everything with `Ctrl+C`.
+
+## Frontend Scripts
+
+Inside `frontend-astro/`, these scripts are still available:
+
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run astro -- <args>`
+
+## Legacy Bash Helpers
+
+If you want the older shell-based flow, these helpers remain available:
+
+- `./runall.sh`
+- `./kill.sh`

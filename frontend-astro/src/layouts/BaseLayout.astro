@@ -28,6 +28,7 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
     <meta name="cyberfyx-api-base" content={import.meta.env.PUBLIC_API_BASE ?? ''}>
@@ -36,9 +37,11 @@ const {
 
     <script is:inline>
       (function(){
-        const t = localStorage.getItem('cyberfyx-theme') ||
-          (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.style.colorScheme = 'light';
+        try {
+          localStorage.setItem('cyberfyx-theme', 'light');
+        } catch (_) {}
       })();
     </script>
   </head>
@@ -52,9 +55,10 @@ const {
     <Footer />
 
     <script>
+      import '../scripts/theme.ts';
       import '../scripts/nav.ts';
       import '../scripts/animations.ts';
+      import '../scripts/search.ts';
     </script>
   </body>
 </html>
-
