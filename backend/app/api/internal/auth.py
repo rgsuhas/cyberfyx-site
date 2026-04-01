@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from app.api.dependencies import DBSession, get_current_user
 from app.core.errors import AppError, build_validation_details
+from app.core.rate_limit import limiter
 from app.models.staff import StaffUser
 from app.schemas.auth import StaffUserRead, TokenRequest, TokenResponse
 from app.services.auth import authenticate_user
@@ -13,6 +14,7 @@ router = APIRouter(prefix="/auth", tags=["internal-auth"])
 
 
 @router.post("/token", response_model=TokenResponse)
+@limiter.limit("5/minute")
 async def issue_token(request: Request, session: DBSession) -> TokenResponse:
     content_type = (request.headers.get("content-type") or "").split(";")[0].strip().lower()
     try:
