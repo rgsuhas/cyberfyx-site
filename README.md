@@ -30,7 +30,9 @@ The repository is a decoupled web app with three local runtime parts:
 
 ## Quick Start
 
+Use the root-level starter when you want to bring up everything at once.
 Run this from the repository root:
+The command must be run from the top-level folder that contains the root `package.json`.
 
 ```bash
 npm start
@@ -41,6 +43,8 @@ That single command prepares the local environment and starts:
 - the FastAPI backend on `http://localhost:8000`
 - the Astro frontend on `http://localhost:4321`
 - the backend outbox worker
+
+Do not run `npm start` inside `frontend-astro/` or `backend/`. Run it only from the repository root.
 
 Open `http://localhost:8000/docs` for the API docs.
 If either default port is already busy, the starter automatically picks the next free local port and prints it in the terminal.
