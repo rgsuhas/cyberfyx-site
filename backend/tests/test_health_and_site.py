@@ -27,7 +27,9 @@ def test_frontend_root_and_contact_page_are_served(client):
     assert "/api/v1/public/site/search-index" in frontend_script.text
 
 
-def test_contact_profile_includes_office_regions_and_active_interests(client, seeded_db):
+def test_contact_profile_includes_office_regions_and_active_interests(
+    client, seeded_db
+):
     response = client.get("/api/v1/public/site/contact-profile")
 
     assert response.status_code == 200
@@ -40,7 +42,7 @@ def test_contact_profile_includes_office_regions_and_active_interests(client, se
     regions = extract_collection_items(payload.get("office_regions"))
     interests = extract_collection_items(payload.get("interest_options"))
 
-    assert [region["slug"] for region in regions] == ["india", "singapore", "philippines", "dubai"]
+    assert [region["slug"] for region in regions] == ["bangalore"]
     assert [interest["slug"] for interest in interests] == [
         "iso-consultation-services",
         "cybersecurity-services",

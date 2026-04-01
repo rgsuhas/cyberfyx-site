@@ -13,8 +13,8 @@ from app.models import (
     ContactInterestOption,
     ContactProfile,
     EndpointCatalogRow,
-    OfficePresenceRegion,
     OfferingTaxonomyLink,
+    OfficePresenceRegion,
     ServiceOffering,
     SolutionTrack,
     StaffUser,
@@ -22,7 +22,10 @@ from app.models import (
 )
 from app.models.enums import PublicationStatus, StaffRole, TaxonomyGroup
 
-def _upsert(session: Session, model: Any, lookup: dict[str, Any], values: dict[str, Any]) -> tuple[Any, bool]:
+
+def _upsert(
+    session: Session, model: Any, lookup: dict[str, Any], values: dict[str, Any]
+) -> tuple[Any, bool]:
     instance = session.scalar(select(model).filter_by(**lookup))
     created = instance is None
 
@@ -56,12 +59,7 @@ def _seed_contact_profile(session: Session) -> tuple[ContactProfile, bool]:
 
 
 def _seed_regions(session: Session, profile: ContactProfile) -> int:
-    region_specs = [
-        {"slug": "india", "label": "India", "display_order": 1},
-        {"slug": "singapore", "label": "Singapore", "display_order": 2},
-        {"slug": "philippines", "label": "Philippines", "display_order": 3},
-        {"slug": "dubai", "label": "Dubai", "display_order": 4},
-    ]
+    region_specs = [{"slug": "bangalore", "label": "Bangalore", "display_order": 1}]
     created = 0
     for spec in region_specs:
         _, was_created = _upsert(
@@ -76,15 +74,60 @@ def _seed_regions(session: Session, profile: ContactProfile) -> int:
 
 def _seed_interest_options(session: Session, profile: ContactProfile) -> int:
     interest_specs = [
-        {"slug": "iso-consultation-services", "label": "ISO consultation services", "route_target": "sales", "display_order": 1},
-        {"slug": "cybersecurity-services", "label": "Cybersecurity services", "route_target": "sales", "display_order": 2},
-        {"slug": "it-security-and-continuity", "label": "IT security and continuity", "route_target": "sales", "display_order": 3},
-        {"slug": "endpoint-management-services", "label": "Endpoint management services", "route_target": "sales", "display_order": 4},
-        {"slug": "patch-management-software", "label": "Patch management software", "route_target": "sales", "display_order": 5},
-        {"slug": "power-management-software", "label": "Power management software", "route_target": "sales", "display_order": 6},
-        {"slug": "core-industry-services", "label": "Core industry services", "route_target": "sales", "display_order": 7},
-        {"slug": "training", "label": "Training", "route_target": "sales", "display_order": 8},
-        {"slug": "general-inquiry", "label": "General inquiry", "route_target": "sales", "display_order": 9},
+        {
+            "slug": "iso-consultation-services",
+            "label": "ISO consultation services",
+            "route_target": "sales",
+            "display_order": 1,
+        },
+        {
+            "slug": "cybersecurity-services",
+            "label": "Cybersecurity services",
+            "route_target": "sales",
+            "display_order": 2,
+        },
+        {
+            "slug": "it-security-and-continuity",
+            "label": "IT security and continuity",
+            "route_target": "sales",
+            "display_order": 3,
+        },
+        {
+            "slug": "endpoint-management-services",
+            "label": "Endpoint management services",
+            "route_target": "sales",
+            "display_order": 4,
+        },
+        {
+            "slug": "patch-management-software",
+            "label": "Patch management software",
+            "route_target": "sales",
+            "display_order": 5,
+        },
+        {
+            "slug": "power-management-software",
+            "label": "Power management software",
+            "route_target": "sales",
+            "display_order": 6,
+        },
+        {
+            "slug": "core-industry-services",
+            "label": "Core industry services",
+            "route_target": "sales",
+            "display_order": 7,
+        },
+        {
+            "slug": "training",
+            "label": "Training",
+            "route_target": "sales",
+            "display_order": 8,
+        },
+        {
+            "slug": "general-inquiry",
+            "label": "General inquiry",
+            "route_target": "sales",
+            "display_order": 9,
+        },
     ]
     created = 0
     for spec in interest_specs:
@@ -193,7 +236,9 @@ def _seed_solution_tracks(session: Session) -> tuple[dict[str, SolutionTrack], i
     return tracks, created
 
 
-def _seed_taxonomy_terms(session: Session) -> tuple[dict[tuple[str, str], TaxonomyTerm], int]:
+def _seed_taxonomy_terms(
+    session: Session,
+) -> tuple[dict[tuple[str, str], TaxonomyTerm], int]:
     term_specs = [
         (TaxonomyGroup.framework_or_standard, "iso-27001", "ISO 27001"),
         (TaxonomyGroup.framework_or_standard, "iso-27701", "ISO 27701"),
@@ -249,7 +294,9 @@ def _seed_taxonomy_terms(session: Session) -> tuple[dict[tuple[str, str], Taxono
     return terms, created
 
 
-def _seed_offerings(session: Session, tracks: dict[str, SolutionTrack]) -> tuple[dict[str, ServiceOffering], int]:
+def _seed_offerings(
+    session: Session, tracks: dict[str, SolutionTrack]
+) -> tuple[dict[str, ServiceOffering], int]:
     offering_specs = [
         {
             "track_slug": "cybersecurity",
@@ -367,10 +414,30 @@ def _seed_offerings(session: Session, tracks: dict[str, SolutionTrack]) -> tuple
 
 def _seed_endpoint_rows(session: Session, track: SolutionTrack) -> int:
     endpoint_specs = [
-        {"display_order": 1, "product_name": "Unified endpoint management", "solution_name": "UEM and device lifecycle control", "service_name": "Endpoint governance"},
-        {"display_order": 2, "product_name": "Security monitoring", "solution_name": "SIEM and alert triage", "service_name": "Detection support"},
-        {"display_order": 3, "product_name": "Data-center operations", "solution_name": "SmartDC visibility and control", "service_name": "Operational assurance"},
-        {"display_order": 4, "product_name": "Backup and resilience", "solution_name": "Cloud and backup coordination", "service_name": "Recovery readiness"},
+        {
+            "display_order": 1,
+            "product_name": "Unified endpoint management",
+            "solution_name": "UEM and device lifecycle control",
+            "service_name": "Endpoint governance",
+        },
+        {
+            "display_order": 2,
+            "product_name": "Security monitoring",
+            "solution_name": "SIEM and alert triage",
+            "service_name": "Detection support",
+        },
+        {
+            "display_order": 3,
+            "product_name": "Data-center operations",
+            "solution_name": "SmartDC visibility and control",
+            "service_name": "Operational assurance",
+        },
+        {
+            "display_order": 4,
+            "product_name": "Backup and resilience",
+            "solution_name": "Cloud and backup coordination",
+            "service_name": "Recovery readiness",
+        },
     ]
     created = 0
     for spec in endpoint_specs:
@@ -388,18 +455,45 @@ def _seed_endpoint_rows(session: Session, track: SolutionTrack) -> int:
     return created
 
 
-def _seed_offering_taxonomy_links(session: Session, offerings: dict[str, ServiceOffering], terms: dict[tuple[str, str], TaxonomyTerm]) -> int:
+def _seed_offering_taxonomy_links(
+    session: Session,
+    offerings: dict[str, ServiceOffering],
+    terms: dict[tuple[str, str], TaxonomyTerm],
+) -> int:
     link_map = {
         "vapt-and-attack-path-reduction": ["vapt", "red-team", "pci-dss"],
         "privacy-and-governance-leadership": ["vciso", "dpo", "gdpr", "hipaa"],
-        "framework-implementation-and-controls": ["iso-27001", "iso-27701", "iso-20000-1", "soc-2"],
-        "continuity-and-cloud-governance": ["iso-22301", "cloud-governance", "csa-star", "nist"],
+        "framework-implementation-and-controls": [
+            "iso-27001",
+            "iso-27701",
+            "iso-20000-1",
+            "soc-2",
+        ],
+        "continuity-and-cloud-governance": [
+            "iso-22301",
+            "cloud-governance",
+            "csa-star",
+            "nist",
+        ],
         "endpoint-management-and-uem": ["uem", "ipm-plus", "enterprise-it"],
         "monitoring-backup-and-smartdc": ["siem", "smartdc", "backup"],
-        "management-systems-and-audit-support": ["iso-9001", "iso-14001", "iso-45001", "public-sector"],
-        "supplier-assurance-and-safety-programs": ["regulated-enterprises", "industrial-operations"],
+        "management-systems-and-audit-support": [
+            "iso-9001",
+            "iso-14001",
+            "iso-45001",
+            "public-sector",
+        ],
+        "supplier-assurance-and-safety-programs": [
+            "regulated-enterprises",
+            "industrial-operations",
+        ],
         "security-and-privacy-awareness": ["awareness", "gdpr", "hipaa", "soc-2"],
-        "continuity-and-recovery-enablement": ["continuity", "recovery", "nist", "itil"],
+        "continuity-and-recovery-enablement": [
+            "continuity",
+            "recovery",
+            "nist",
+            "itil",
+        ],
     }
 
     created = 0

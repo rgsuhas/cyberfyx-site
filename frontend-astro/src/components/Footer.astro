@@ -48,7 +48,9 @@ const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
           <li>
             <span class="footer-icon"
                onclick={`window.open('${profile.map_url}', '_blank')`}
-               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;" aria-hidden="true">📍</span>
+               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;" aria-hidden="true">
+              <i class="fa-solid fa-location-dot"></i>
+            </span>
             <span set:html={profile.headquarters_address.replace(', ', ',<br>')}></span>
           </li>
           <li>
