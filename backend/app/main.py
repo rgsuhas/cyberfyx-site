@@ -82,8 +82,7 @@ def create_app() -> FastAPI:
         response.headers["X-Request-ID"] = request_id
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = CSP_POLICY
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         if request.url.path.startswith("/api/v1/internal") or request.url.path == "/api/v1/public/inquiries":
             response.headers["Cache-Control"] = "no-store"
         return response

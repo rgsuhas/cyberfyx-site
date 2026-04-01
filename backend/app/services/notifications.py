@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import smtplib
+import ssl
 from email.message import EmailMessage
 
 from sqlalchemy import select
@@ -162,7 +163,7 @@ def _send_email(*, subject: str, body: str, recipients: list[str], event: Outbox
 
     with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as smtp:
         if settings.smtp_use_tls:
-            smtp.starttls()
+            smtp.starttls(context=ssl.create_default_context())
         if settings.smtp_username and settings.smtp_password:
             smtp.login(settings.smtp_username, settings.smtp_password)
         smtp.send_message(message)
