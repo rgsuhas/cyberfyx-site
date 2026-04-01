@@ -17,7 +17,7 @@ const { interestOptions = [] } = Astro.props;
     <p>We'll get back to you within one business day.</p>
   </div>
 
-  <form id="contact-form" action="#" method="POST" class="contact-form" novalidate data-inquiry-form="public">
+  <form id="contact-form" data-inquiry-form="public" action="#" method="POST" class="contact-form" novalidate>
 
     <div class="cf-row">
       <div class="cf-field">
@@ -51,7 +51,7 @@ const { interestOptions = [] } = Astro.props;
       <span class="cf-bar"></span>
     </div>
 
-    <div id="form-status" class="cf-status" style="display:none;" role="status" aria-live="polite"></div>
+    <div id="form-status" class="cf-status" style="display:none;"></div>
 
     <button type="submit" id="submit-btn" class="cf-submit">
       <span class="cf-submit-text">Send Message</span>
@@ -130,6 +130,10 @@ const { interestOptions = [] } = Astro.props;
     border-color: var(--logo-text-primary);
   }
 
+  .cf-input.field-invalid {
+    border-color: var(--accent-tertiary);
+  }
+
   /* Floating label */
   .cf-label {
     position: absolute;
@@ -149,6 +153,10 @@ const { interestOptions = [] } = Astro.props;
     color: var(--logo-text-accent);
     font-weight: 600;
     letter-spacing: 0.04em;
+  }
+
+  .cf-field.field-has-error .cf-label {
+    color: var(--accent-tertiary);
   }
 
   /* Animated underline bar */
@@ -207,6 +215,13 @@ const { interestOptions = [] } = Astro.props;
   .cf-select:focus ~ .cf-select-icon {
     transform: rotate(180deg);
     color: var(--logo-text-primary);
+  }
+
+  .form-warning {
+    margin-top: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--accent-tertiary);
+    line-height: 1.4;
   }
 
   /* Status message */

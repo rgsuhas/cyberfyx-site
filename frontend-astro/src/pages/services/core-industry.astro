@@ -1,84 +1,79 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
-import FooterCta from '../../components/FooterCta.astro';
-import GlassCard from '../../components/GlassCard.astro';
-import { fetchTrackData } from '../../lib/api';
-import { CORE_INDUSTRY_FALLBACK } from '../../lib/fallbacks';
-
-const track = (await fetchTrackData('core-industry-services')) ?? CORE_INDUSTRY_FALLBACK;
 ---
 
-<BaseLayout
-  title={track.meta_title ?? 'Core Industry Services | Cyberfyx'}
-  description={track.meta_description ?? track.short_summary}
->
-  <PageHero
-    eyebrow="Service Area"
-    headline={track.hero_title}
-    lede={track.hero_body}
-  >
-    <div slot="aside" class="flex-col gap-1">
-      <h3 style="font-size: 1.25rem;">Key Offerings</h3>
-      <ul style="padding: 0; padding-left: 1.2rem;" class="flex-col gap-1">
-        {track.offerings.map(o => <li>{o.kicker || o.title}</li>)}
-      </ul>
-    </div>
-  </PageHero>
-
-  <section class="section">
+<BaseLayout title="Core Industry Services | Cyberfyx">
+  <section style="padding-top: 100px; padding-bottom: 60px;">
     <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-        {track.offerings.map((offering, i) => (
-          <GlassCard className={`fade-up${i > 0 ? ' delay-100' : ''}`}>
-            <h3 class="mb-1 text-xl">{offering.title}</h3>
-            {offering.kicker && <p class="offering-kicker">{offering.kicker}</p>}
-            <p>{offering.description}</p>
-            {offering.taxonomy_terms.length > 0 && (
-              <div class="tag-row">
-                {offering.taxonomy_terms.map(t => (
-                  <span class="offering-tag">{t.label}</span>
-                ))}
-              </div>
-            )}
-          </GlassCard>
-        ))}
+      <div class="grid grid-2" style="align-items: center; gap: 4rem;">
+        <div class="fade-up">
+          <h1 style="margin-bottom: 1.5rem;">Core Industry Services</h1>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">Cyberfyx provides end-to-end support—from gap assessments, documentation, training, and internal audits to certification liaison and post-certification maintenance. We ensure that management systems are not just compliant, but also integrated, efficient, and aligned with business performance objectives.</p>
+          <a href="/contact/" class="btn btn-primary">Speak to an Expert</a>
+        </div>
+        <div class="glass-card fade-up delay-100" style="text-align: center; padding: 4rem;">
+          <i class="fa-solid fa-industry" style="font-size: 6rem; color: var(--accent-secondary);"></i>
+        </div>
       </div>
     </div>
   </section>
 
-  <FooterCta />
-</BaseLayout>
+  <section style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Our <span class="text-gradient">Offerings</span></h2>
+      </div>
+      
+      <div class="grid grid-2" style="gap: 2rem; margin-bottom: 4rem;">
+        
+        <div class="glass-card fade-up" style="padding: 2.5rem; border-top: 4px solid var(--accent-primary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>ISO 9001 – Quality Management System</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">We help organizations establish robust QMS frameworks for consistent product and service delivery. Cyberfyx supports policy development, process mapping, internal audits, and certification readiness.</p>
+        </div>
 
-<style>
-  .offering-kicker {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent-primary);
-    margin-bottom: 0.5rem;
-  }
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.85rem;
-  }
-  .offering-tag {
-    display: inline-block;
-    padding: 0.2rem 0.55rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    border-radius: 999px;
-    background: rgba(53, 29, 117, 0.08);
-    color: var(--logo-text-primary);
-    border: 1px solid rgba(53, 29, 117, 0.15);
-    white-space: nowrap;
-  }
-  [data-theme="dark"] .offering-tag {
-    background: rgba(231, 135, 49, 0.1);
-    color: var(--accent-primary);
-    border-color: rgba(231, 135, 49, 0.2);
-  }
-</style>
+        <div class="glass-card fade-up delay-100" style="padding: 2.5rem; border-top: 4px solid var(--accent-secondary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-secondary);"></i>ISO 14001 – Environmental Management System</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Cyberfyx enables companies to implement eco-conscious operational controls, perform environmental impact assessments, and maintain regulatory compliance with sustainability goals.</p>
+        </div>
+
+        <div class="glass-card fade-up" style="padding: 2.5rem; border-top: 4px solid var(--accent-primary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>ISO 45001 – Occupational Health & Safety Management System</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">We assist in creating safe work environments by implementing hazard identification, risk mitigation, and safety culture practices aligned with ISO 45001 requirements.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-100" style="padding: 2.5rem; border-top: 4px solid var(--accent-secondary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-secondary);"></i>AS9100 – Aerospace Quality Management</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Tailored for the aerospace sector, Cyberfyx supports the implementation of AS9100 standards with a focus on product safety, risk management, and regulatory alignment.</p>
+        </div>
+
+        <div class="glass-card fade-up" style="padding: 2.5rem; border-top: 4px solid var(--accent-primary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>IATF 16949 – Automotive Quality Management System</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">For the automotive supply chain, Cyberfyx delivers gap assessments, process optimization, and audit support to help organizations meet the quality expectations of OEMs and Tier-1 suppliers.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-100" style="padding: 2.5rem; border-top: 4px solid var(--accent-secondary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-secondary);"></i>Fire Safety Audit</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">We assess fire protection systems, evacuation protocols, and risk controls as per NBC and local fire regulations. Cyberfyx ensures your premises meet safety compliance and insurance requirements.</p>
+        </div>
+
+        <div class="glass-card fade-up" style="padding: 2.5rem; border-top: 4px solid var(--accent-primary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>Forest Stewardship Council (FSC) Audit</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Ensures responsible sourcing and sustainable forest management practices in line with FSC Chain of Custody (CoC) standards. Cyberfyx supports FSC audit readiness, documentation, traceability, and supplier compliance.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-100" style="padding: 2.5rem; border-top: 4px solid var(--accent-secondary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-secondary);"></i>SEDEX Audit (SMETA)</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Social compliance audit based on labor rights, health & safety, environment, and business ethics. Cyberfyx helps you prepare for SMETA 2/4-pillar audits and improve your supplier credibility.</p>
+        </div>
+
+        <div class="glass-card fade-up" style="grid-column: 1 / -1; padding: 2.5rem; border-left: 4px solid var(--accent-primary);">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem; margin-right: 10px; vertical-align: middle; color: var(--accent-primary);"></i>Awareness & Internal Auditor Training</h3>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">We deliver structured training for ISO standards, compliance frameworks, and audit skills. Our programs equip teams to understand requirements and independently conduct internal audits.</p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="/services" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to All Services</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

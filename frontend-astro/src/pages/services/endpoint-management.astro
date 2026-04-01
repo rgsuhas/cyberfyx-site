@@ -1,148 +1,88 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
-import FooterCta from '../../components/FooterCta.astro';
-import GlassCard from '../../components/GlassCard.astro';
-import { fetchTrackData } from '../../lib/api';
-import { ENDPOINT_FALLBACK } from '../../lib/fallbacks';
-
-const track = (await fetchTrackData('endpoint-operations')) ?? ENDPOINT_FALLBACK;
 ---
 
-<BaseLayout
-  title={track.meta_title ?? 'Endpoint Operations | Cyberfyx'}
-  description={track.meta_description ?? track.short_summary}
->
-  <PageHero
-    eyebrow="Service Area"
-    headline={track.hero_title}
-    lede={track.hero_body}
-  >
-    <div slot="aside" class="flex-col gap-1">
-      <h3 style="font-size: 1.25rem;">Key Offerings</h3>
-      <ul style="padding: 0; padding-left: 1.2rem;" class="flex-col gap-1">
-        {track.offerings.map(o => <li>{o.kicker || o.title}</li>)}
-      </ul>
-    </div>
-  </PageHero>
-
-  <section class="section">
+<BaseLayout title="Smart Endpoint Management | Cyberfyx">
+  <section style="padding-top: 100px; padding-bottom: 60px;">
     <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-        {track.offerings.map((offering, i) => (
-          <GlassCard className={`fade-up${i > 0 ? ' delay-100' : ''}`}>
-            <h3 class="mb-1 text-xl">{offering.title}</h3>
-            {offering.kicker && <p class="offering-kicker">{offering.kicker}</p>}
-            <p>{offering.description}</p>
-            {offering.taxonomy_terms.length > 0 && (
-              <div class="tag-row">
-                {offering.taxonomy_terms.map(t => (
-                  <span class="offering-tag">{t.label}</span>
-                ))}
-              </div>
-            )}
-          </GlassCard>
-        ))}
+      <div class="grid grid-2" style="align-items: center; gap: 4rem;">
+        <div class="fade-up">
+          <h1 style="margin-bottom: 1.5rem;">Smart Endpoint Management</h1>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">CYBERFYX is a trusted authorized solution partner of IPM+ Endpoint Management Solutions, empowering enterprises with intelligent and secure device management. We deliver seamless deployment, optimization, and compliance-driven control across all endpoints using IPM+'s powerful automation and analytics. Together, we help organizations enhance IT efficiency, reduce risks, and ensure enterprise-wide visibility and control.</p>
+          <a href="/contact/" class="btn btn-primary">Speak to an Expert</a>
+        </div>
+        <div class="glass-card fade-up delay-100" style="text-align: center; padding: 4rem;">
+          <i class="fa-solid fa-laptop-code" style="font-size: 6rem; color: var(--accent-secondary);"></i>
+        </div>
       </div>
     </div>
   </section>
 
-  {track.endpoint_rows.length > 0 && (
-    <section class="section" style="padding-top: 0;">
-      <div class="container">
-        <h2 class="mb-2" style="font-size: 1.4rem;">Product &amp; Solution Catalog</h2>
-        <div class="catalog-table-wrap fade-up">
-          <table class="catalog-table">
+  <section style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Our <span class="text-gradient">Offerings</span></h2>
+      </div>
+      
+      <div class="glass-card fade-up delay-100" style="padding: 0; overflow: hidden;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; background: var(--bg-primary);">
             <thead>
-              <tr>
-                <th>Product</th>
-                <th>Solution</th>
-                <th>Service</th>
+              <tr style="background: var(--logo-text-primary); color: white;">
+                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Products</th>
+                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Solutions</th>
+                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Services</th>
               </tr>
             </thead>
             <tbody>
-              {track.endpoint_rows.map(row => (
-                <tr>
-                  <td>{row.product_name}</td>
-                  <td>{row.solution_name}</td>
-                  <td>{row.service_name}</td>
-                </tr>
-              ))}
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Unified Endpoint Management</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Endpoint Management Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Green Private Cloud (VPC)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Unified Monitoring Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Industry 4.0 Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Enterprise Architecture Consulting</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ SmartDC</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Smart Buildings IoT Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Industry 4.0 Digital Transformation</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ SIEM</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Datacenter Management Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Efficient Data Centre Design</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Cloud</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">NOC Solutions</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">DR Service</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">PowerMind AI</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Backup Solutions</td>
+                <td style="padding: 1.5rem;"></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Backup Pro</td>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">Resource Monitoring Solutions</td>
+                <td style="padding: 1.5rem;"></td>
+              </tr>
+              <tr>
+                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Powerwise Pro</td>
+                <td style="padding: 1.5rem;"></td>
+                <td style="padding: 1.5rem;"></td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </section>
-  )}
 
-  <FooterCta />
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="/services" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to All Services</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
-
-<style>
-  .offering-kicker {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent-primary);
-    margin-bottom: 0.5rem;
-  }
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.85rem;
-  }
-  .offering-tag {
-    display: inline-block;
-    padding: 0.2rem 0.55rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    border-radius: 999px;
-    background: rgba(53, 29, 117, 0.08);
-    color: var(--logo-text-primary);
-    border: 1px solid rgba(53, 29, 117, 0.15);
-    white-space: nowrap;
-  }
-  [data-theme="dark"] .offering-tag {
-    background: rgba(231, 135, 49, 0.1);
-    color: var(--accent-primary);
-    border-color: rgba(231, 135, 49, 0.2);
-  }
-  .catalog-table-wrap {
-    overflow-x: auto;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-glass);
-    background: var(--bg-glass);
-    backdrop-filter: blur(12px);
-  }
-  .catalog-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-  }
-  .catalog-table th {
-    padding: 0.85rem 1.1rem;
-    text-align: left;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border-glass);
-  }
-  .catalog-table td {
-    padding: 0.8rem 1.1rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-glass);
-  }
-  .catalog-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-  .catalog-table tbody tr:hover td {
-    background: rgba(53, 29, 117, 0.04);
-  }
-  [data-theme="dark"] .catalog-table tbody tr:hover td {
-    background: rgba(231, 135, 49, 0.05);
-  }
-</style>

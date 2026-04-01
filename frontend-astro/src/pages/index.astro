@@ -1,25 +1,26 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import FooterCta from '../components/FooterCta.astro';
 import GlassCard from '../components/GlassCard.astro';
+
+void GlassCard;
 ---
 
-<BaseLayout title="Cyberfyx | Cybersecurity and Operational Resilience">
-  <!-- Hero Section (Test Structure + Webpro Copy) -->
+<BaseLayout title="Cyberfyx | Next-Generation Cybersecurity & IT Solutions">
+  <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="container">
       <div class="hero-layout">
         <div class="hero-content fade-up">
-          <span class="eyebrow" style="color: var(--logo-text-primary);">Cybersecurity | Compliance | Endpoint control</span>
-          <h1 style="color: var(--text-primary);">Security clarity for <span class="text-gradient">regulated operations.</span></h1>
-          <p class="lede">Cyberfyx helps regulated teams reduce audit risk, improve operational control, and keep security, compliance, and endpoint resilience aligned.</p>
-          <div class="hero-actions fade-up delay-100 mt-2">
-            <a href="/contact" class="btn btn-primary hero-btn hero-btn-primary">
-              <span>Book a consultation</span>
+          <h1>Next-Generation <span class="text-gradient">Cybersecurity</span> & IT Solutions</h1>
+          <p>Empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience for a digital-first world.</p>
+          <div class="hero-actions fade-up delay-100">
+            <a href="/services" class="btn btn-primary hero-btn hero-btn-primary">
+              <span>Explore Services</span>
+              <i class="fa-solid fa-arrow-right"></i>
             </a>
-            <a href="/services" class="btn hero-btn hero-btn-secondary">
-              <span>Explore solutions</span>
+            <a href="/contact" class="btn hero-btn hero-btn-secondary">
+              <span>Contact an Expert</span>
+              <i class="fa-regular fa-comments"></i>
             </a>
           </div>
         </div>
@@ -37,170 +38,230 @@ import GlassCard from '../components/GlassCard.astro';
     </div>
   </section>
 
-  <!-- Proof Rail -->
-  <section class="section section-tight bg-secondary" style="background: var(--bg-secondary);">
+  <!-- Why Choose Us Features -->
+  <section style="padding-top: 0; background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(53, 29, 117, 0.06) 50%, rgba(248, 250, 252, 0) 100%);">
     <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
-         <GlassCard className="fade-up">
-            <span class="mono">Partnership posture</span>
-            <h4 class="mt-1 mb-1">Authorized implementation partner</h4>
-            <p style="font-size: 0.95rem;">Advisory, rollout, and ongoing support in one engagement model.</p>
-         </GlassCard>
-         <GlassCard className="fade-up delay-100">
-            <span class="mono">Framework range</span>
-            <h4 class="mt-1 mb-1">Security, privacy, continuity, and service management</h4>
-            <p style="font-size: 0.95rem;">Aligned to ISO, cloud controls, and sector requirements.</p>
-         </GlassCard>
-         <GlassCard className="fade-up delay-200">
-            <span class="mono">Operating contexts</span>
-            <h4 class="mt-1 mb-1">Cloud, on-prem, hybrid, and industrial estates</h4>
-            <p style="font-size: 0.95rem;">Built for distributed devices, regulated data, and uptime risk.</p>
-         </GlassCard>
-         <GlassCard className="fade-up delay-300">
-            <span class="mono">Advisory access</span>
-            <h4 class="mt-1 mb-1">Direct contact, map access, and regional office presence</h4>
-            <p style="font-size: 0.95rem;">Clear access to the team without heavy embeds or clutter.</p>
-         </GlassCard>
-      </div>
-    </div>
-  </section>
-
-  <!-- Core Outcomes (Stats/Solutions) -->
-  <section class="section section-band">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Core outcomes"
-        headline="Built to move buyers from uncertainty to control."
-        lede="A clearer trust model for regulated and mission-critical teams."
-      />
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-        <div class="surface fade-up">
-          <h4 class="mb-1">Pass audits with less friction</h4>
-          <p>Translate framework requirements into evidence, controls, and working documentation teams can sustain.</p>
+      <div class="grid grid-3">
+        <div class="glass-card fade-up">
+          <div class="service-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <h3>Purpose-Built Security</h3>
+          <p>Designed for today's dynamic threat landscape with intelligence-driven architectures.</p>
         </div>
-        <div class="surface fade-up delay-100">
-          <h4 class="mb-1">Reduce endpoint and infrastructure risk</h4>
-          <p>Improve device visibility, patch discipline, access governance, and operational hygiene across distributed estates.</p>
+        <div class="glass-card fade-up delay-100">
+          <div class="service-icon"><i class="fa-solid fa-network-wired"></i></div>
+          <h3>End-to-End Coverage</h3>
+          <p>Protecting infrastructure, data, and users across on-prem, cloud, and hybrid environments.</p>
         </div>
-        <div class="surface fade-up delay-200">
-          <h4 class="mb-1">Strengthen incident readiness</h4>
-          <p>Stress test controls, identify blind spots, and build a response posture that stands up under pressure.</p>
+        <div class="glass-card fade-up delay-200">
+          <div class="service-icon"><i class="fa-solid fa-bolt"></i></div>
+          <h3>Rapid Response</h3>
+          <p>Real-time threat mitigation, digital forensics, and incident response when every second matters.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Five Solution Tracks -->
-  <section class="section">
+  <!-- About Section -->
+  <section id="about" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(231, 135, 49, 0.05) 50%, rgba(248, 250, 252, 0) 100%);">
     <div class="container">
-      <SectionHeader 
-        eyebrow="Solution architecture"
-        headline="Five solution tracks, grouped by the jobs enterprise teams actually need done."
-        lede="Each offer is framed around delivery scope, outcomes, and fit."
-      />
-      
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-        <GlassCard className="fade-up">
-          <span class="mono">Cybersecurity</span>
-          <h3 class="mb-1 mt-1" style="font-size: 1.25rem;">Risk reduction, testing, privacy, and strategic leadership.</h3>
-          <p>For teams that need practical security programs, assurance, and decision support.</p>
-          <a class="btn btn-outline w-full mt-2" href="/services/cybersecurity">View cybersecurity</a>
-        </GlassCard>
-
-        <GlassCard className="fade-up delay-100">
-          <span class="mono">IT security</span>
-          <h3 class="mb-1 mt-1" style="font-size: 1.25rem;">Framework implementation, internal audits, continuity, and cloud governance.</h3>
-          <p>For organizations that need standards translated into working controls and audit-ready evidence.</p>
-          <a class="btn btn-outline w-full mt-2" href="/services/it-security">View IT security</a>
-        </GlassCard>
-
-        <GlassCard className="fade-up delay-200">
-          <span class="mono">Endpoint operations</span>
-          <h3 class="mb-1 mt-1" style="font-size: 1.25rem;">Visibility, automation, monitoring, and lifecycle control.</h3>
-          <p>For IT teams balancing device growth, compliance, operational resilience, and automation expectations.</p>
-          <a class="btn btn-outline w-full mt-2" href="/services/endpoint-management">View endpoint operations</a>
-        </GlassCard>
-
-        <GlassCard className="fade-up">
-          <span class="mono">Core industry services</span>
-          <h3 class="mb-1 mt-1" style="font-size: 1.25rem;">Management systems, sector audits, and industrial assurance.</h3>
-          <p>For operations, quality, and supplier teams dealing with regulated industrial environments.</p>
-          <a class="btn btn-outline w-full mt-2" href="/services/core-industry">View core industry</a>
-        </GlassCard>
-
-        <GlassCard className="fade-up delay-100">
-          <span class="mono">Training</span>
-          <h3 class="mb-1 mt-1" style="font-size: 1.25rem;">Capability building for security, privacy, governance, and recovery teams.</h3>
-          <p>For organizations that need internal awareness and audit readiness to sustain change after rollout.</p>
-          <a class="btn btn-outline w-full mt-2" href="/services/training">View training</a>
-        </GlassCard>
+      <div class="section-header fade-up">
+        <h2>About <span class="text-gradient">Cyberfyx</span></h2>
+        <p>A globally trusted leader in cybersecurity and smart IT management.</p>
       </div>
-    </div>
-  </section>
 
-  <!-- Industry Grid -->
-  <section class="section" style="background: var(--bg-secondary);">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Industry coverage"
-        headline="Designed for environments with sector mandates, supplier pressure, and uptime risk."
-        lede="The operating contexts where Cyberfyx brings the most confidence and control."
-        centered={true}
-      />
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-        <GlassCard className="fade-up border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Regulated digital businesses</span>
-          <h4 class="mt-1 mb-1">Healthcare, BFSI, SaaS, and privacy-sensitive platforms.</h4>
-          <p>Programs built for regulated data handling, customer assurance, audit obligations, and changing privacy expectations.</p>
-        </GlassCard>
-        <GlassCard className="fade-up delay-100 border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Industrial operations</span>
-          <h4 class="mt-1 mb-1">Manufacturing, aerospace, automotive, energy, and OT-heavy operations.</h4>
-          <p>Support for safety, continuity, supplier audits, and industrial transformation programs.</p>
-        </GlassCard>
+      <div class="grid grid-2" style="align-items: center; gap: 4rem; margin-bottom: 4rem;">
+        <div class="fade-up">
+          <h3 style="margin-bottom: 2rem; font-size: 2rem;">Empowering Organizations for a <span class="text-gradient">Digital-First World</span></h3>
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Cyberfyx is focused on empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience. With a holistic approach to cybersecurity and IT governance, we deliver outcome-driven services that span from strategic consulting to real-time protection and compliance.</p>
+          <p style="font-size: 1.1rem;">As an authorized solution partner for leading Endpoint Management and Data Centre Solutions, we bring deep technical expertise and tailored implementations to secure, optimize, and transform enterprise IT infrastructures.</p>
+        </div>
+        <div class="glass-card fade-up delay-100" style="padding: 3rem; text-align: center;">
+          <i class="fa-solid fa-shield-cat" style="font-size: 5rem; color: var(--accent-secondary); margin-bottom: 1.5rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Intelligence-Led Protection</h3>
+          <p>Designed for today's dynamic threat landscape, our architectures ensure you're always one step ahead of adversaries.</p>
+        </div>
       </div>
-      <div class="text-center mt-3 fade-up delay-200">
-         <a href="/industries" class="btn btn-outline">Explore All Supported Industries</a>
-      </div>
-    </div>
-  </section>
 
-  <!-- Delivery steps -->
-  <section class="section section-tight">
-    <div class="container">
-      <SectionHeader 
-        eyebrow="Delivery model"
-        headline="A clearer engagement path from assessment to operating rhythm."
-      />
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-        <div class="surface fade-up">
-           <span class="mono">01 Diagnose</span>
-           <h4 class="mt-1 mb-1">Assess the current state</h4>
-           <p style="font-size: 0.95rem;">Map frameworks, tooling, risks, and operational dependencies across the environment.</p>
+      <div class="grid grid-2">
+        <div class="glass-card fade-up">
+          <div class="service-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>Our Vision</h3>
+          <p>We empower businesses to operate confidently with secure, compliant, and resilient digital environments—whether on-premises, in the cloud, or hybrid.</p>
         </div>
-        <div class="surface fade-up delay-100">
-           <span class="mono">02 Prioritize</span>
-           <h4 class="mt-1 mb-1">Shape the control roadmap</h4>
-           <p style="font-size: 0.95rem;">Translate findings into phased remediation, governance workstreams, and delivery checkpoints.</p>
-        </div>
-        <div class="surface fade-up delay-200">
-           <span class="mono">03 Implement</span>
-           <h4 class="mt-1 mb-1">Operationalize the program</h4>
-           <p style="font-size: 0.95rem;">Deploy controls, documentation, training, endpoint tooling, and audit-ready evidence.</p>
-        </div>
-        <div class="surface fade-up delay-300">
-           <span class="mono">04 Sustain</span>
-           <h4 class="mt-1 mb-1">Maintain readiness over time</h4>
-           <p style="font-size: 0.95rem;">Support reviews, internal audits, monitoring, and continuous improvement as environments evolve.</p>
+        <div class="glass-card fade-up delay-100">
+          <div class="service-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <h3>Our Mission</h3>
+          <p>We help enterprises stay compliant, reduce risk, and optimize operations through expert consulting, automation, and managed services.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <FooterCta />
+  <!-- Stats Break -->
+  <section class="stats-section" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(231, 135, 49, 0.04) 50%, rgba(248, 250, 252, 0) 100%);">
+    <div class="container">
+      <div class="grid grid-4">
+        <div class="stat-item fade-up">
+          <div class="stat-number">24/7</div>
+          <p>Real-time Monitoring</p>
+        </div>
+        <div class="stat-item fade-up delay-100">
+          <div class="stat-number"><span class="counter" data-target="360">0</span>°</div>
+          <p>Security Coverage</p>
+        </div>
+        <div class="stat-item fade-up delay-200">
+          <div class="stat-number"><span class="counter" data-target="100">0</span>%</div>
+          <p>Compliance Focus</p>
+        </div>
+        <div class="stat-item fade-up delay-300">
+          <div class="stat-number">Auth</div>
+          <p>Solution Partners</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(10, 31, 61, 0.05) 50%, rgba(248, 250, 252, 0) 100%);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Our <span class="text-gradient">Core Services</span></h2>
+        <p>We deliver comprehensive, end-to-end outcome-driven solutions that protect your infrastructure and optimize business operations.</p>
+      </div>
+
+      <div class="grid grid-2" style="gap: 3rem;">
+        <a href="/services/cybersecurity/" class="glass-card fade-up service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <i class="fa-solid fa-shield-virus" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
+            <h3 style="margin: 0; font-size: 1.25rem; color: var(--logo-text-primary);">Cybersecurity</h3>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
+        </a>
+
+        <a href="/services/endpoint-management/" class="glass-card fade-up delay-100 service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <i class="fa-solid fa-laptop-code" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
+            <h3 style="margin: 0; font-size: 1.25rem; color: var(--logo-text-primary);">Endpoint Management</h3>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
+        </a>
+
+        <a href="/services/it-security/" class="glass-card fade-up delay-200 service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <i class="fa-solid fa-server" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
+            <h3 style="margin: 0; font-size: 1.25rem; color: var(--logo-text-primary);">IT Security</h3>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
+        </a>
+
+        <a href="/services/core-industry/" class="glass-card fade-up delay-300 service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <i class="fa-solid fa-industry" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
+            <h3 style="margin: 0; font-size: 1.25rem; color: var(--logo-text-primary);">Core Industry Services</h3>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
+        </a>
+        
+        <a href="/services/training/" class="glass-card fade-up delay-100 service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <i class="fa-solid fa-chalkboard-user" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
+            <h3 style="margin: 0; font-size: 1.25rem; color: var(--logo-text-primary);">Training</h3>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industries Section -->
+  <section id="industries" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(10, 31, 61, 0.06) 50%, rgba(248, 250, 252, 0) 100%);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Industries We <span class="text-gradient">Protect</span></h2>
+        <p>Tailored cybersecurity and IT governance frameworks built for specific sector requirements.</p>
+      </div>
+
+      <div class="grid grid-4" style="gap: 2rem;">
+        <a href="/industries" class="glass-card fade-up" style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 3rem 4rem; text-decoration: none; border-left: 4px solid var(--accent-primary);">
+          <div>
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.75rem;">Explore All Supported Industries</h3>
+            <p style="margin: 0; font-size: 1.1rem;">From Healthcare to Manufacturing, we secure mission-critical environments.</p>
+          </div>
+          <div class="btn btn-primary" style="pointer-events: none;">View Industries</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(53, 29, 117, 0.05) 50%, rgba(248, 250, 252, 0) 100%);">
+    <div class="container">
+      <div class="grid grid-2" style="gap: 4rem;">
+        <div class="fade-up">
+          <h2 style="margin-bottom: 2rem;">Get in <span class="text-gradient">Touch</span></h2>
+          <p style="margin-bottom: 3rem; font-size: 1.1rem;">Whether you need an immediate cybersecurity assessment, managed endpoint services, or ISO consultation, our team is ready to assist you.</p>
+
+          <div class="contact-info-item">
+            <div class="contact-info-icon" onclick="window.open('https://www.google.com/maps/search/?api=1&query=Janardhana%20Towers,%20Ashok%20Nagar,%20Bengaluru%20560025', '_blank')" style="cursor: pointer;">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Office Location</h4>
+              <p>Janardhana Towers, Ashok Nagar<br>Bengaluru 560025</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Phone Number</h4>
+              <p><a href="tel:+919663410308">+91 9663410308</a></p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="contact-info-content">
+              <h4>Email Address</h4>
+              <p><a href="mailto:sales@cyberfyx.net">sales@cyberfyx.net</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card fade-up delay-100">
+          <h3 style="margin-bottom: 1.5rem;">Send Us a Message</h3>
+          <form id="contact-form" data-inquiry-form="public">
+            <div class="form-group">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="subject" class="form-label">Service Interested In</label>
+              <select id="subject" name="subject" class="form-control" style="appearance: none;" required>
+                <option value="" disabled selected>Select a Service</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="endpoint">Endpoint Management</option>
+                <option value="itsecurity">IT Security</option>
+                <option value="iso">ISO Consultation</option>
+                <option value="other">Other Inquiry</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message" class="form-label">Message</label>
+              <textarea id="message" name="message" class="form-control" placeholder="How can we help you?" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
-
-<script>
-  import '../scripts/animations.ts';
-  import '../scripts/hero-grid.ts';
-</script>

@@ -1,56 +1,84 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import FooterCta from '../components/FooterCta.astro';
-import GlassCard from '../components/GlassCard.astro';
 ---
 
 <BaseLayout 
-  title="Industries | Cyberfyx Sector Coverage"
-  description="Tailored cybersecurity and IT governance frameworks built for specific sector requirements."
+  title="Industries We Protect | Cyberfyx"
+  description="Cyberfyx delivers tailored cybersecurity and IT governance frameworks for diverse sectors including healthcare, finance, manufacturing, and more."
 >
-  <PageHero 
-    eyebrow="Sector Coverage"
-    headline="Industries We Protect"
-    lede="Tailored cybersecurity and IT governance frameworks built for specific sector requirements."
-  >
-    <div slot="aside" class="flex-col gap-1" style="list-style: none;">
-      <h3 style="font-size: 1.25rem;">Key Sectors</h3>
-      <ul style="padding: 0;" class="flex-col gap-1">
-        <li>Healthcare & BFSI</li>
-        <li>Industrial & Manufacturing</li>
-        <li>Public & Essential Services</li>
-        <li>Enterprise Estates</li>
-      </ul>
-    </div>
-  </PageHero>
-
-  <section class="section">
+  <!-- Industries Section -->
+  <section id="industries" style="padding-top: 100px; background: var(--bg-secondary);">
     <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-        <GlassCard className="fade-up border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Regulated digital businesses</span>
-          <h4 class="mt-1 mb-1">Healthcare, BFSI, SaaS, and privacy-sensitive platforms.</h4>
-          <p>Programs built for regulated data handling, customer assurance, audit obligations, and changing privacy expectations.</p>
-        </GlassCard>
-        <GlassCard className="fade-up delay-100 border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Industrial operations</span>
-          <h4 class="mt-1 mb-1">Manufacturing, aerospace, automotive, energy, and OT-heavy operations.</h4>
-          <p>Support for safety, continuity, supplier audits, and industrial transformation programs.</p>
-        </GlassCard>
-        <GlassCard className="fade-up delay-200 border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Public and essential services</span>
-          <h4 class="mt-1 mb-1">Government, telecom, logistics, and education.</h4>
-          <p>Structured governance, continuity planning, and control visibility for environments where stakeholder trust matters daily.</p>
-        </GlassCard>
-        <GlassCard className="fade-up delay-300 border-l-4" style="border-left: 4px solid var(--accent-primary);">
-          <span class="mono">Enterprise estates</span>
-          <h4 class="mt-1 mb-1">Cloud, on-prem, and hybrid teams scaling operations.</h4>
-          <p>Endpoint governance, service management alignment, and security programs that keep pace with platform change.</p>
-        </GlassCard>
+      <div class="section-header fade-up">
+        <h2>Industries We <span class="text-gradient">Protect</span></h2>
+        <p>Tailored cybersecurity and IT governance frameworks built for specific sector requirements.</p>
+      </div>
+
+      <div class="grid grid-4" style="gap: 2rem;">
+        <div class="glass-card industry-card fade-up">
+          <i class="fa-solid fa-notes-medical"></i>
+          <h4>Healthcare Options</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-100">
+          <i class="fa-solid fa-building-columns"></i>
+          <h4>Banking & Finance</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-200">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <h4>Retail & E-Commerce</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-300">
+          <i class="fa-solid fa-industry"></i>
+          <h4>Manufacturing</h4>
+        </div>
+
+        <div class="glass-card industry-card fade-up">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <h4>Education & EdTech</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-100">
+          <i class="fa-solid fa-plane-departure"></i>
+          <h4>Defense & Aerospace</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-200">
+          <i class="fa-solid fa-network-wired"></i>
+          <h4>Information Technology</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-300">
+          <i class="fa-solid fa-plug-circle-bolt"></i>
+          <h4>Energy & Utilities</h4>
+        </div>
+        <div class="glass-card industry-card fade-up">
+          <i class="fa-solid fa-landmark-dome"></i>
+          <h4>Government & Public Sector</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-100">
+          <i class="fa-solid fa-tower-cell"></i>
+          <h4>Telecom</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-200">
+          <i class="fa-solid fa-truck-arrow-right"></i>
+          <h4>Transport & Logistics</h4>
+        </div>
+        <div class="glass-card industry-card fade-up delay-300">
+          <i class="fa-solid fa-photo-film"></i>
+          <h4>Media & Entertainment</h4>
+        </div>
       </div>
     </div>
   </section>
 
-  <FooterCta />
+  <!-- CTA Section -->
+  <section style="text-align: center;">
+    <div class="container">
+      <div class="fade-up">
+        <h2 style="margin-bottom: 1rem;">Find Your <span class="text-gradient">Industry Security Solution</span></h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Connect with our team to discuss industry-specific security challenges and discover how our tailored solutions address your sector's unique requirements.</p>
+        <a href="/contact" class="btn btn-primary hero-btn" style="min-width: 220px; padding: 1rem 2rem;">
+          <span>Talk to Our Industry Expert</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

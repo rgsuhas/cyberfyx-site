@@ -1,366 +1,321 @@
-import { spawn, spawnSync } from "node:child_process";
-import { copyFileSync, existsSync } from "node:fs";
-import net from "node:net";
-import { dirname, join } from "node:path";
-import { createInterface } from "node:readline";
-import process from "node:process";
-import { fileURLToPath } from "node:url";
+import { copyFileSync, existsSync, mkdirSync, unlinkSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import net from 'node:net';
+import { spawn, spawnSync } from 'node:child_process';
 
-const isWindows = process.platform === "win32";
-const npmCommand = "npm";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = resolve(__dirname, '..');
+const backendDir = join(rootDir, 'backend');
+const frontendDir = join(rootDir, 'frontend-astro');
+const pidFile = join(rootDir, '.runall.pids');
 
-const __filename = fileURLToPath(import.meta.url);
-const scriptsDir = dirname(__filename);
-const repoRoot = dirname(scriptsDir);
-const backendDir = join(repoRoot, "backend");
-const frontendDir = join(repoRoot, "frontend-astro");
-const backendEnvPath = join(backendDir, ".env");
-const backendEnvExamplePath = join(backendDir, ".env.example");
-const frontendEnvPath = join(frontendDir, ".env");
-const frontendEnvExamplePath = join(frontendDir, ".env.example");
-const backendVenvPython = isWindows
-  ? join(backendDir, ".venv", "Scripts", "python.exe")
-  : join(backendDir, ".venv", "bin", "python");
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const taskKillCommand = process.platform === 'win32' ? 'taskkill' : null;
 
-const workerLoopSource = `
-import time
-from app.worker import run_pending_outbox_batch
-
-print("Worker loop started. Polling every 5 seconds.", flush=True)
-while True:
-    processed = run_pending_outbox_batch()
-    print(f"Processed {processed} outbox event(s).", flush=True)
-    time.sleep(5)
-`.trim();
-
-const runningChildren = [];
+const children = [];
 let shuttingDown = false;
-const defaultCorsOrigins = [
-  "http://127.0.0.1:4321",
-  "http://localhost:4321",
-  "http://127.0.0.1:8080",
-  "http://localhost:8080",
-];
 
 function log(message) {
-  console.log(`[start] ${message}`);
+  process.stdout.write(`${message}\n`);
 }
 
-function logError(message) {
-  console.error(`[start] ${message}`);
+function commandExists(command, args = ['--version']) {
+  const result = spawnSync(command, args, { stdio: 'ignore', shell: false });
+  return result.status === 0;
 }
 
-function formatCommand(command, args) {
-  return [command, ...args].join(" ");
+function resolveSystemPython() {
+  const candidates = process.platform === 'win32'
+    ? ['python', 'py']
+    : ['python3', 'python'];
+
+  for (const candidate of candidates) {
+    const args = candidate === 'py' ? ['-3', '--version'] : ['--version'];
+    if (commandExists(candidate, args)) {
+      return {
+        command: candidate,
+        baseArgs: candidate === 'py' ? ['-3'] : [],
+      };
+    }
+  }
+
+  throw new Error('Python was not found on PATH. Install Python 3.10+ and retry.');
 }
 
-function quoteWindowsArg(arg) {
-  if (!/[\s"]/u.test(arg)) {
+function resolveBackendPython() {
+  return process.platform === 'win32'
+    ? join(backendDir, '.venv', 'Scripts', 'python.exe')
+    : join(backendDir, '.venv', 'bin', 'python');
+}
+
+function ensureFileFromExample(targetPath, examplePath) {
+  if (!existsSync(targetPath) && existsSync(examplePath)) {
+    copyFileSync(examplePath, targetPath);
+  }
+}
+
+function shouldUseShell(command) {
+  return process.platform === 'win32' && command.toLowerCase().endsWith('.cmd');
+}
+
+function quoteForCmd(arg) {
+  if (!/[\s"&()^<>|]/.test(arg)) {
     return arg;
   }
 
-  return `"${arg.replace(/"/g, '\\"')}"`;
+  return `"${arg.replace(/"/g, '""')}"`;
 }
 
-function commandAvailable(command, args) {
-  try {
-    const result = spawnSync(command, args, {
-      stdio: "ignore",
-      windowsHide: true,
+function spawnProcess(command, args, options = {}) {
+  const cwd = options.cwd ?? rootDir;
+  const env = options.env ?? process.env;
+  const stdio = options.stdio ?? 'inherit';
+
+  if (shouldUseShell(command)) {
+    const commandLine = [quoteForCmd(command), ...args.map(arg => quoteForCmd(String(arg)))].join(' ');
+    return spawn(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', commandLine], {
+      cwd,
+      env,
+      stdio,
+      shell: false,
     });
-    return result.status === 0;
-  } catch {
-    return false;
   }
+
+  return spawn(command, args, {
+    cwd,
+    env,
+    stdio,
+    shell: false,
+  });
 }
 
-function detectSystemPython() {
-  if (process.env.PYTHON) {
-    return { command: process.env.PYTHON, baseArgs: [] };
-  }
+function run(command, args, options = {}) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawnProcess(command, args, {
+      cwd: options.cwd ?? rootDir,
+      env: options.env ?? process.env,
+      stdio: 'inherit',
+    });
 
-  if (commandAvailable("py", ["-3", "--version"])) {
-    return { command: "py", baseArgs: ["-3"] };
-  }
-
-  if (commandAvailable("python", ["--version"])) {
-    return { command: "python", baseArgs: [] };
-  }
-
-  throw new Error(
-    "Python 3 was not found. Install Python 3.10+ or set the PYTHON environment variable."
-  );
+    child.on('error', rejectPromise);
+    child.on('exit', code => {
+      if (code === 0) {
+        resolvePromise();
+      } else {
+        rejectPromise(new Error(`${command} ${args.join(' ')} failed with exit code ${code ?? 'unknown'}.`));
+      }
+    });
+  });
 }
 
-function attachPrefixedOutput(stream, label, writer) {
-  if (!stream) {
+function pickPort(preferredPort, host = '127.0.0.1', maxAttempts = 25) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    let port = preferredPort;
+
+    const tryListen = () => {
+      const server = net.createServer();
+      server.unref();
+      server.once('error', error => {
+        server.close();
+        if (['EADDRINUSE', 'EACCES'].includes(error.code) && port < preferredPort + maxAttempts) {
+          port += 1;
+          tryListen();
+          return;
+        }
+        rejectPromise(error);
+      });
+      server.listen(port, host, () => {
+        const chosenPort = port;
+        server.close(() => resolvePromise(chosenPort));
+      });
+    };
+
+    tryListen();
+  });
+}
+
+async function waitForHttp(url, timeoutMs = 30000) {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        return;
+      }
+    } catch {
+      // Server is still starting.
+    }
+
+    await new Promise(resolvePromise => setTimeout(resolvePromise, 500));
+  }
+
+  throw new Error(`Timed out waiting for ${url}`);
+}
+
+function registerChild(child, label) {
+  children.push({ child, label });
+
+  child.on('error', error => {
+    if (!shuttingDown) {
+      console.error(`[${label}] failed to start.`, error);
+      void shutdown(1);
+    }
+  });
+
+  child.on('exit', code => {
+    if (!shuttingDown) {
+      log(`[${label}] exited with code ${code ?? 'unknown'}. Shutting down the stack.`);
+      void shutdown(code ?? 1);
+    }
+  });
+}
+
+function writePidFile() {
+  const pids = children
+    .map(entry => entry.child.pid)
+    .filter(pid => typeof pid === 'number');
+
+  writeFileSync(pidFile, `${pids.join(' ')}\n`, 'utf8');
+}
+
+async function terminateChild(child) {
+  if (!child.pid || child.killed) return;
+
+  if (process.platform === 'win32' && taskKillCommand) {
+    await new Promise(resolvePromise => {
+      const killer = spawn(taskKillCommand, ['/pid', String(child.pid), '/t', '/f'], {
+        stdio: 'ignore',
+        shell: false,
+      });
+      killer.on('exit', () => resolvePromise());
+      killer.on('error', () => resolvePromise());
+    });
     return;
   }
 
-  const lines = createInterface({ input: stream });
-  lines.on("line", (line) => writer(`[${label}] ${line}`));
-}
-
-function spawnProcess(label, command, args, options = {}) {
-  let resolvedCommand = command;
-  let resolvedArgs = args;
-  let useShell = options.shell ?? false;
-
-  if (isWindows && useShell) {
-    resolvedCommand = "cmd.exe";
-    resolvedArgs = ["/d", "/s", "/c", [command, ...args.map(quoteWindowsArg)].join(" ")];
-    useShell = false;
-  }
-
-  const child = spawn(resolvedCommand, resolvedArgs, {
-    cwd: options.cwd ?? repoRoot,
-    env: { ...process.env, ...(options.env ?? {}) },
-    shell: useShell,
-    stdio: ["ignore", "pipe", "pipe"],
-    windowsHide: true,
-  });
-
-  attachPrefixedOutput(child.stdout, label, console.log);
-  attachPrefixedOutput(child.stderr, label, console.error);
-
-  child.on("error", (error) => {
-    logError(`${label} failed to start: ${error.message}`);
-  });
-
-  return child;
-}
-
-function runCommand(label, command, args, options = {}) {
-  return new Promise((resolve, reject) => {
-    const child = spawnProcess(label, command, args, options);
-    child.on("close", (code) => {
-      if (code === 0 || options.allowFailure) {
-        resolve();
-        return;
-      }
-
-      reject(
-        new Error(
-          `${label} exited with code ${code}. Command: ${formatCommand(command, args)}`
-        )
-      );
-    });
-  });
-}
-
-function startManagedProcess(label, command, args, options = {}) {
-  const child = spawnProcess(label, command, args, options);
-  runningChildren.push({ label, child });
-
-  child.on("close", (code) => {
-    if (shuttingDown) {
-      return;
-    }
-
-    const normalizedCode = typeof code === "number" ? code : 1;
-    logError(`${label} exited unexpectedly with code ${normalizedCode}.`);
-    void shutdown(normalizedCode);
-  });
-
-  return child;
-}
-
-function ensureEnvFile(envPath, examplePath, label) {
-  if (!existsSync(envPath) && existsSync(examplePath)) {
-    copyFileSync(examplePath, envPath);
-    log(`Created ${label} .env from .env.example.`);
-  }
-}
-
-function canListenOnPort(port) {
-  return new Promise((resolve, reject) => {
-    const server = net.createServer();
-
-    server.once("error", (error) => {
-      if (error.code === "EADDRINUSE" || error.code === "EACCES") {
-        resolve(false);
-        return;
-      }
-
-      reject(error);
-    });
-
-    server.once("listening", () => {
-      server.close(() => resolve(true));
-    });
-
-    server.listen(port, "127.0.0.1");
-  });
-}
-
-async function resolvePreferredPort(preferredPort, label) {
-  if (await canListenOnPort(preferredPort)) {
-    return preferredPort;
-  }
-
-  for (let candidate = preferredPort + 1; candidate < preferredPort + 50; candidate += 1) {
-    if (await canListenOnPort(candidate)) {
-      log(`Port ${preferredPort} is unavailable for ${label}. Using ${candidate} instead.`);
-      return candidate;
-    }
-  }
-
-  throw new Error(`No free port found for ${label} near ${preferredPort}.`);
-}
-
-function stopChildProcess(entry) {
-  return new Promise((resolve) => {
-    const { child } = entry;
-
-    if (!child.pid || child.exitCode !== null) {
-      resolve();
-      return;
-    }
-
-    if (isWindows) {
-      const killer = spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"], {
-        stdio: "ignore",
-        windowsHide: true,
-      });
-
-      killer.on("close", () => resolve());
-      killer.on("error", () => resolve());
-      return;
-    }
-
-    child.kill("SIGTERM");
-    setTimeout(() => {
-      if (child.exitCode === null) {
-        child.kill("SIGKILL");
-      }
-      resolve();
-    }, 1500).unref();
-  });
+  child.kill('SIGTERM');
 }
 
 async function shutdown(exitCode = 0) {
-  if (shuttingDown) {
-    return;
+  if (shuttingDown) return;
+  shuttingDown = true;
+
+  try {
+    if (existsSync(pidFile)) {
+      unlinkSync(pidFile);
+    }
+  } catch {
+    // Ignore cleanup failures.
   }
 
-  shuttingDown = true;
-  log("Stopping child processes...");
-  await Promise.allSettled([...runningChildren].reverse().map(stopChildProcess));
+  await Promise.all(children.map(entry => terminateChild(entry.child)));
   process.exit(exitCode);
 }
 
-async function ensureBackendVirtualEnv(systemPython) {
-  if (existsSync(backendVenvPython)) {
-    return;
-  }
+process.on('SIGINT', () => {
+  void shutdown(0);
+});
 
-  log("Creating backend virtual environment...");
-  await runCommand(
-    "backend:venv",
-    systemPython.command,
-    [...systemPython.baseArgs, "-m", "venv", ".venv"],
-    { cwd: backendDir }
-  );
-}
+process.on('SIGTERM', () => {
+  void shutdown(0);
+});
 
-async function ensureBackendDependencies() {
-  log("Installing backend dependencies...");
-  await runCommand(
-    "backend:pip",
-    backendVenvPython,
-    ["-m", "pip", "install", "-e", ".[dev]"],
-    { cwd: backendDir }
-  );
-}
+process.on('uncaughtException', error => {
+  console.error(error);
+  void shutdown(1);
+});
 
-async function ensureFrontendDependencies() {
-  if (existsSync(join(frontendDir, "node_modules"))) {
-    return;
-  }
-
-  log("Installing frontend dependencies...");
-  await runCommand("frontend:install", npmCommand, ["install"], {
-    cwd: frontendDir,
-    shell: isWindows,
-  });
-}
-
-async function runBackendBootstrap() {
-  log("Running backend migrations...");
-  await runCommand(
-    "backend:migrate",
-    backendVenvPython,
-    ["-m", "alembic", "-c", "alembic/alembic.ini", "upgrade", "head"],
-    { cwd: backendDir }
-  );
-
-  log("Seeding backend reference data...");
-  await runCommand("backend:seed", backendVenvPython, ["-m", "app.db.seed"], {
-    cwd: backendDir,
-    allowFailure: true,
-  });
-}
+process.on('unhandledRejection', error => {
+  console.error(error);
+  void shutdown(1);
+});
 
 async function main() {
-  process.on("SIGINT", () => void shutdown(0));
-  process.on("SIGTERM", () => void shutdown(0));
+  mkdirSync(join(rootDir, 'scripts'), { recursive: true });
 
-  const backendPort = await resolvePreferredPort(8000, "backend");
-  const frontendPort = await resolvePreferredPort(4321, "frontend");
+  const preferredBackendPort = Number.parseInt(process.env.BACKEND_PORT ?? process.env.CYBERFYX_BACKEND_PORT ?? '8000', 10);
+  const preferredFrontendPort = Number.parseInt(process.env.FRONTEND_PORT ?? process.env.CYBERFYX_FRONTEND_PORT ?? '4321', 10);
 
-  ensureEnvFile(backendEnvPath, backendEnvExamplePath, "backend");
-  ensureEnvFile(frontendEnvPath, frontendEnvExamplePath, "frontend");
+  const backendPort = await pickPort(preferredBackendPort);
+  const frontendPort = await pickPort(preferredFrontendPort);
 
-  const systemPython = detectSystemPython();
-  await ensureBackendVirtualEnv(systemPython);
-  await ensureBackendDependencies();
-  await runBackendBootstrap();
-  await ensureFrontendDependencies();
-
-  log("Starting backend API, outbox worker, and Astro dev server...");
-
-  const backendEnv = {};
-  if (frontendPort !== 4321) {
-    const corsOrigins = new Set(defaultCorsOrigins);
-    corsOrigins.add(`http://127.0.0.1:${frontendPort}`);
-    corsOrigins.add(`http://localhost:${frontendPort}`);
-    backendEnv.CYBERFYX_CORS_ORIGINS = [...corsOrigins].join(",");
+  if (backendPort !== preferredBackendPort) {
+    log(`[start] Port ${preferredBackendPort} is busy. Using backend port ${backendPort}.`);
+  }
+  if (frontendPort !== preferredFrontendPort) {
+    log(`[start] Port ${preferredFrontendPort} is busy. Using frontend port ${frontendPort}.`);
   }
 
-  startManagedProcess(
-    "backend",
-    backendVenvPython,
-    ["-m", "uvicorn", "app.main:app", "--reload", "--port", String(backendPort)],
+  const python = resolveSystemPython();
+  const backendPython = resolveBackendPython();
+  const backendBaseUrl = `http://127.0.0.1:${backendPort}`;
+
+  if (!existsSync(backendPython)) {
+    log('[backend] Creating virtual environment...');
+    await run(python.command, [...python.baseArgs, '-m', 'venv', '.venv'], { cwd: backendDir });
+  }
+
+  ensureFileFromExample(join(backendDir, '.env'), join(backendDir, '.env.example'));
+  ensureFileFromExample(join(frontendDir, '.env'), join(frontendDir, '.env.example'));
+
+  log('[backend] Installing Python dependencies...');
+  await run(backendPython, ['-m', 'pip', 'install', '-e', '.[dev]'], { cwd: backendDir });
+
+  log('[backend] Running migrations...');
+  await run(backendPython, ['-m', 'alembic', '-c', 'alembic/alembic.ini', 'upgrade', 'head'], { cwd: backendDir });
+
+  log('[backend] Seeding database...');
+  await run(backendPython, ['-m', 'app.db.seed'], { cwd: backendDir });
+
+  log('[frontend] Installing npm dependencies...');
+  await run(npmCommand, ['install', '--no-fund', '--no-audit'], { cwd: frontendDir });
+
+  log(`[backend] Starting FastAPI on ${backendBaseUrl} ...`);
+  const backendChild = spawn(
+    backendPython,
+    ['-m', 'uvicorn', 'app.main:app', '--reload', '--host', '127.0.0.1', '--port', String(backendPort)],
     {
       cwd: backendDir,
-      env: backendEnv,
-    }
+      env: process.env,
+      stdio: 'inherit',
+      shell: false,
+    },
   );
+  registerChild(backendChild, 'backend');
 
-  startManagedProcess("worker", backendVenvPython, ["-u", "-c", workerLoopSource], {
-    cwd: backendDir,
-  });
+  await waitForHttp(`${backendBaseUrl}/health/live`);
 
-  startManagedProcess(
-    "frontend",
+  log(`[frontend] Starting Astro on http://127.0.0.1:${frontendPort} ...`);
+  const frontendChild = spawnProcess(
     npmCommand,
-    ["run", "dev", "--", "--host", "127.0.0.1", "--port", String(frontendPort)],
+    ['run', 'dev', '--', '--host', '127.0.0.1', '--port', String(frontendPort)],
     {
       cwd: frontendDir,
       env: {
-        PUBLIC_API_BASE: `http://127.0.0.1:${backendPort}`,
-        API_PROXY_TARGET: `http://127.0.0.1:${backendPort}`,
+        ...process.env,
+        PUBLIC_API_BASE: backendBaseUrl,
+        API_PROXY_TARGET: backendBaseUrl,
       },
-      shell: isWindows,
-    }
+      stdio: 'inherit',
+    },
   );
+  registerChild(frontendChild, 'frontend');
 
-  log(`Backend:  http://127.0.0.1:${backendPort}`);
-  log(`Frontend: http://127.0.0.1:${frontendPort}`);
-  log("Press Ctrl+C to stop everything.");
+  writePidFile();
+
+  log('');
+  log('Running:');
+  log(`  Backend  -> ${backendBaseUrl}`);
+  log(`  Frontend -> http://127.0.0.1:${frontendPort}`);
+  log('');
+  log('Press Ctrl+C to stop both processes.');
 }
 
-main().catch(async (error) => {
-  logError(error.message);
+try {
+  await main();
+} catch (error) {
+  console.error(error);
   await shutdown(1);
-});
+}

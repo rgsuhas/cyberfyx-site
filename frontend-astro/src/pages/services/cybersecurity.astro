@@ -1,84 +1,64 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
-import FooterCta from '../../components/FooterCta.astro';
-import GlassCard from '../../components/GlassCard.astro';
-import { fetchTrackData } from '../../lib/api';
-import { CYBERSECURITY_FALLBACK } from '../../lib/fallbacks';
-
-const track = (await fetchTrackData('cybersecurity')) ?? CYBERSECURITY_FALLBACK;
 ---
 
-<BaseLayout
-  title={track.meta_title ?? 'Cybersecurity | Cyberfyx'}
-  description={track.meta_description ?? track.short_summary}
->
-  <PageHero
-    eyebrow="Service Area"
-    headline={track.hero_title}
-    lede={track.hero_body}
-  >
-    <div slot="aside" class="flex-col gap-1">
-      <h3 style="font-size: 1.25rem;">Key Offerings</h3>
-      <ul style="padding: 0; padding-left: 1.2rem;" class="flex-col gap-1">
-        {track.offerings.map(o => <li>{o.kicker || o.title}</li>)}
-      </ul>
-    </div>
-  </PageHero>
-
-  <section class="section">
-    <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-        {track.offerings.map((offering, i) => (
-          <GlassCard className={`fade-up${i > 0 ? ' delay-100' : ''}`}>
-            <h3 class="mb-1 text-xl">{offering.title}</h3>
-            {offering.kicker && <p class="offering-kicker">{offering.kicker}</p>}
-            <p>{offering.description}</p>
-            {offering.taxonomy_terms.length > 0 && (
-              <div class="tag-row">
-                {offering.taxonomy_terms.map(t => (
-                  <span class="offering-tag">{t.label}</span>
-                ))}
-              </div>
-            )}
-          </GlassCard>
-        ))}
+<BaseLayout title="Cybersecurity Services | Cyberfyx">
+  <section style="padding-top: 100px; padding-bottom: 60px;">
+    <div class="container fade-up">
+      <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 4rem; text-align: justify;">
+        CYBERFYX delivers end-to-end cyber security services, helping organizations secure their IT infrastructure, achieve regulatory compliance, and reduce cyber risks. Our offerings include VAPT, GRC maintenance, PCI DSS readiness, DPDPA implementation, privacy audits, red team assessments, and attack surface management. We also provide virtual CISO/DPO services and specialized IT staffing. With a structured approach—from assessment to implementation and ongoing maintenance—we ensure tailored, scalable, and compliant security solutions. Cyberfyx combines technical expertise, regulatory insight, and operational execution to be your trusted partner in building resilient cybersecurity programs
+      </p>
+      
+      <div class="grid grid-3" style="gap: 2rem;">
+        <!-- Grid Items -->
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-laptop-medical"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">VAPT</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-tools"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">GRC Maintenance</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-regular fa-credit-card"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">PCI DSS Readiness</h3>
+        </div>
+        
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-display"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">vCiso & DPO</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-user-secret"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">GDPR - CCPA - DPDPA</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-users"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">Red Team Assignment</h3>
+        </div>
+        
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-users-gear"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">Security Operation Center</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-folder-open"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">HIPPA</h3>
+        </div>
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-money-bill-transfer"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">SOC 2 Type 2</h3>
+        </div>
+        
+        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem; grid-column: 2 / span 1;">
+          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-gauge"></i></div>
+          <h3 style="margin-bottom: 0; font-size: 1.18rem;">CMMI</h3>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="/services" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to All Services</a>
       </div>
     </div>
   </section>
-
-  <FooterCta />
 </BaseLayout>
-
-<style>
-  .offering-kicker {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--accent-primary);
-    margin-bottom: 0.5rem;
-  }
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.85rem;
-  }
-  .offering-tag {
-    display: inline-block;
-    padding: 0.2rem 0.55rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    border-radius: 999px;
-    background: rgba(53, 29, 117, 0.08);
-    color: var(--logo-text-primary);
-    border: 1px solid rgba(53, 29, 117, 0.15);
-    white-space: nowrap;
-  }
-  [data-theme="dark"] .offering-tag {
-    background: rgba(231, 135, 49, 0.1);
-    color: var(--accent-primary);
-    border-color: rgba(231, 135, 49, 0.2);
-  }
-</style>

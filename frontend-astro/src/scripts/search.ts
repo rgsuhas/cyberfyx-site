@@ -1,266 +1,209 @@
 import { searchIndex as staticIndex, type SearchEntry } from '../data/search-index';
 
-interface ResolvedSearchEntry extends SearchEntry {
-  searchText: string;
-}
-
-let resolvedIndex: ResolvedSearchEntry[] = staticIndex.map((entry) => normalizeStaticSearchEntry(entry));
-let searchIndexPromise: Promise<void> | null = null;
-let globalSearchListenersBound = false;
-
-interface SearchApiEntry {
+interface SearchIndexEntry {
   href: string;
   title: string;
   section: string;
-  text: string;
+  searchText: string;
 }
 
-function uniq(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)));
-}
+type BackendSearchEntry = {
+  href?: string;
+  section?: string;
+  text?: string;
+  title?: string;
+  url?: string;
+  excerpt?: string;
+  keywords?: string[];
+};
 
-function buildSearchText(...parts: string[]) {
-  return parts.join(' ').toLowerCase();
-}
-
-function normalizeHref(href: string) {
-  const trimmed = href.trim();
-  if (!trimmed || trimmed === '/' || trimmed === 'index.html') {
-    return '/';
-  }
-
-  const withoutIndex = trimmed.replace(/\/?index\.html$/i, '');
-  if (!withoutIndex) {
-    return '/';
-  }
-
-  return withoutIndex.startsWith('/') ? withoutIndex : `/${withoutIndex}`;
-}
-
-function normalizeStaticSearchEntry(entry: SearchEntry): ResolvedSearchEntry {
-  const url = normalizeHref(entry.url);
-  const keywords = uniq(entry.keywords.map((keyword) => keyword.trim().toLowerCase()));
-
-  return {
-    ...entry,
-    url,
-    keywords,
-    searchText: buildSearchText(entry.title, entry.excerpt, keywords.join(' ')),
-  };
-}
-
-function normalizeApiSearchEntry(entry: SearchApiEntry): ResolvedSearchEntry {
-  const excerptSource = entry.text.trim();
-  const excerpt =
-    excerptSource.length > 180
-      ? `${excerptSource.slice(0, 177).trimEnd()}...`
-      : excerptSource;
-  const keywords = uniq(
-    [
-      `${entry.title} ${entry.section}`
-        .toLowerCase()
-        .split(/[^a-z0-9]+/i)
-        .filter((value) => value.length > 2),
-    ].flat(),
-  );
-  const url = normalizeHref(entry.href);
-
-  return {
-    title: entry.title,
-    url,
-    excerpt,
-    keywords,
-    searchText: buildSearchText(entry.title, entry.section, entry.text, keywords.join(' ')),
-  };
-}
-
-function mergeSearchIndexes(entries: SearchApiEntry[]) {
-  const staticByUrl = new Map(
-    staticIndex.map((entry) => {
-      const normalized = normalizeStaticSearchEntry(entry);
-      return [normalized.url, normalized] as const;
-    }),
-  );
-
-  const mergedEntries = entries.map((entry) => {
-    const normalizedEntry = normalizeApiSearchEntry(entry);
-    const staticEntry = staticByUrl.get(normalizedEntry.url);
-    if (!staticEntry) {
-      return normalizedEntry;
-    }
-
-    staticByUrl.delete(normalizedEntry.url);
-
-    const keywords = uniq([...normalizedEntry.keywords, ...staticEntry.keywords]);
-    return {
-      ...normalizedEntry,
-      keywords,
-      searchText: buildSearchText(
-        normalizedEntry.title,
-        normalizedEntry.excerpt,
-        normalizedEntry.searchText,
-        staticEntry.excerpt,
-        keywords.join(' '),
-      ),
-    };
-  });
-
-  return [...mergedEntries, ...staticByUrl.values()];
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+let resolvedIndex: SearchIndexEntry[] = normalizeStaticEntries(staticIndex);
 
 async function initSearchIndex(apiBaseUrl: string) {
-  if (searchIndexPromise) {
-    return searchIndexPromise;
-  }
+  try {
+    const res = await fetch(`${apiBaseUrl}/api/v1/public/site/search-index`);
+    if (!res.ok) return;
 
-  searchIndexPromise = (async () => {
-    try {
-      const res = await fetch(`${apiBaseUrl}/api/v1/public/site/search-index`);
-      if (!res.ok) return;
-
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        resolvedIndex = mergeSearchIndexes(data as SearchApiEntry[]);
-      }
-    } catch {
-      // Keep the static fallback index.
+    const data = await res.json();
+    const normalized = normalizeSearchEntries(data);
+    if (normalized.length > 0) {
+      resolvedIndex = normalized;
     }
-  })();
-
-  return searchIndexPromise;
+  } catch {
+    // Keep the bundled static index if the backend search API is unavailable.
+  }
 }
 
-function getMatches(query: string) {
-  const normalized = query.trim().toLowerCase();
-  if (normalized.length < 2) {
-    return [];
-  }
+function bootSearch() {
+  initSiteSearch();
 
-  return resolvedIndex
-    .filter((entry) => entry.searchText.includes(normalized))
-    .slice(0, 6);
+  const metaTag = document.querySelector('meta[name="cyberfyx-api-base"]');
+  const apiBaseUrl = metaTag ? (metaTag.getAttribute('content') ?? '') : '';
+  void initSearchIndex(apiBaseUrl);
 }
 
-function renderSearchResults(resultsDiv: HTMLDivElement, query: string) {
-  const normalized = query.trim();
-  if (normalized.length < 2) {
-    resultsDiv.innerHTML = '<div class="site-search-empty">Type at least 2 letters to search.</div>';
-    return false;
-  }
+document.addEventListener('DOMContentLoaded', bootSearch);
+document.addEventListener('astro:page-load', bootSearch);
 
-  const matches = getMatches(normalized);
-  if (matches.length === 0) {
-    resultsDiv.innerHTML = `<div class="site-search-empty">No results found for "${escapeHtml(normalized)}".</div>`;
-    return true;
-  }
+function initSiteSearch() {
+  const searchWrapperNode = document.querySelector('[data-site-search]') as HTMLDivElement | null;
+  if (!searchWrapperNode || searchWrapperNode.dataset.searchInit === '1') return;
 
-  resultsDiv.innerHTML = matches
-    .map(
-      (match) => `
-        <a href="${escapeHtml(match.url)}" class="site-search-result">
-          <strong>${escapeHtml(match.title)}</strong>
-          <span>${escapeHtml(match.excerpt)}</span>
-        </a>
-      `,
-    )
-    .join('');
+  const inputNode = searchWrapperNode.querySelector('.site-search-input') as HTMLInputElement | null;
+  const resultsNode = searchWrapperNode.querySelector('.site-search-results') as HTMLDivElement | null;
+  const closeButtonNode = searchWrapperNode.querySelector('.site-search-close') as HTMLButtonElement | null;
 
-  return true;
-}
+  if (!inputNode || !resultsNode || !closeButtonNode) return;
 
-function closeAllSearchDropdowns() {
-  document.querySelectorAll<HTMLElement>('.site-search.open').forEach((searchRoot) => {
-    searchRoot.classList.remove('open');
-  });
-}
+  const searchWrapper: HTMLDivElement = searchWrapperNode;
+  const input: HTMLInputElement = inputNode;
+  const results: HTMLDivElement = resultsNode;
+  const closeButton: HTMLButtonElement = closeButtonNode;
 
-function bindGlobalSearchListeners() {
-  if (globalSearchListenersBound) {
-    return;
-  }
+  searchWrapper.dataset.searchInit = '1';
 
-  document.addEventListener('click', (event) => {
-    const target = event.target;
-    if (!(target instanceof Node)) {
-      closeAllSearchDropdowns();
+  function renderResults(query = '') {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) {
+      results.innerHTML = '<div class="site-search-empty">Start typing to search the website.</div>';
       return;
     }
 
-    document.querySelectorAll<HTMLElement>('.site-search.open').forEach((searchRoot) => {
-      if (!searchRoot.contains(target)) {
-        searchRoot.classList.remove('open');
-      }
-    });
+    const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
+    const matches = resolvedIndex
+      .filter(entry => queryTokens.every(token => entry.searchText.includes(token)))
+      .slice(0, 10);
+
+    if (!matches.length) {
+      results.innerHTML = '<div class="site-search-empty">No matching pages found. Try contact, services, industries, or careers.</div>';
+      return;
+    }
+
+    results.innerHTML = matches.map(entry => `
+      <a class="site-search-result" href="${entry.href}">
+        <strong>${entry.title}</strong>
+        <small>${entry.section}</small>
+      </a>
+    `).join('');
+  }
+
+  function openSearch() {
+    searchWrapper.classList.add('open');
+    renderResults(input.value);
+  }
+
+  function closeSearch({ clear = false } = {}) {
+    if (clear) {
+      input.value = '';
+    }
+    searchWrapper.classList.remove('open');
+  }
+
+  input.addEventListener('focus', () => {
+    openSearch();
   });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeAllSearchDropdowns();
+  input.addEventListener('input', () => {
+    openSearch();
+  });
+
+  closeButton.addEventListener('click', () => {
+    closeSearch({ clear: true });
+    input.focus();
+  });
+
+  document.addEventListener('click', event => {
+    if (searchWrapper.classList.contains('open') && !searchWrapper.contains(event.target as Node)) {
+      closeSearch();
     }
   });
 
-  globalSearchListenersBound = true;
+  results.addEventListener('click', event => {
+    const resultLink = (event.target as HTMLElement).closest('.site-search-result');
+    if (resultLink) {
+      closeSearch();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      input.focus();
+      openSearch();
+    }
+
+    if (event.key === 'Escape' && searchWrapper.classList.contains('open')) {
+      closeSearch();
+      input.blur();
+    }
+  });
+
+  renderResults();
 }
 
-function initSearch() {
-  const searchRoot = document.getElementById('site-search') as HTMLDivElement | null;
-  const searchInput = document.getElementById('site-search-input') as HTMLInputElement | null;
-  const resultsDiv = document.getElementById('site-search-results') as HTMLDivElement | null;
+function normalizeText(...parts: Array<string | undefined>) {
+  return parts
+    .join(' ')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s./+-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
-  if (!searchRoot || !searchInput || !resultsDiv) {
-    return;
-  }
+function deriveSection(href: string) {
+  if (href === '/') return 'Home';
 
-  if (searchRoot.dataset.searchInit === '1') {
-    return;
-  }
+  return href
+    .replace(/\//g, ' ')
+    .trim()
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
 
-  searchRoot.dataset.searchInit = '1';
-  bindGlobalSearchListeners();
+function normalizeStaticEntries(entries: SearchEntry[]): SearchIndexEntry[] {
+  return entries.map(entry => {
+    const section = deriveSection(entry.url);
+    return {
+      href: entry.url,
+      title: entry.title,
+      section,
+      searchText: normalizeText(entry.title, entry.text, section, entry.url, entry.keywords.join(' ')),
+    };
+  });
+}
 
-  const metaTag = document.querySelector('meta[name="cyberfyx-api-base"]');
-  const apiBaseUrl = metaTag?.getAttribute('content') ?? '';
-  void initSearchIndex(apiBaseUrl);
+function normalizeBackendEntry(entry: BackendSearchEntry): SearchIndexEntry | null {
+  const href = typeof entry.href === 'string'
+    ? entry.href
+    : typeof entry.url === 'string'
+      ? entry.url
+      : null;
 
-  const render = () => {
-    const shouldOpen = renderSearchResults(resultsDiv, searchInput.value);
-    searchRoot.classList.toggle('open', shouldOpen);
+  if (!href || typeof entry.title !== 'string') return null;
+
+  const section = typeof entry.section === 'string' && entry.section.trim()
+    ? entry.section.trim()
+    : deriveSection(href);
+
+  return {
+    href,
+    title: entry.title,
+    section,
+    searchText: normalizeText(
+      entry.title,
+      typeof entry.text === 'string' ? entry.text : undefined,
+      typeof entry.excerpt === 'string' ? entry.excerpt : undefined,
+      section,
+      href,
+      Array.isArray(entry.keywords) ? entry.keywords.join(' ') : undefined,
+    ),
   };
-
-  searchInput.addEventListener('focus', () => {
-    render();
-  });
-
-  searchInput.addEventListener('input', () => {
-    render();
-  });
-
-  searchInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      const firstResult = resultsDiv.querySelector<HTMLAnchorElement>('a.site-search-result');
-      if (firstResult) {
-        event.preventDefault();
-        window.location.href = firstResult.href;
-      }
-    }
-  });
-
-  resultsDiv.addEventListener('click', (event) => {
-    const target = event.target;
-    if (target instanceof Element && target.closest('a.site-search-result')) {
-      searchRoot.classList.remove('open');
-    }
-  });
 }
 
-document.addEventListener('DOMContentLoaded', initSearch);
-document.addEventListener('astro:page-load', initSearch);
+function normalizeSearchEntries(data: unknown): SearchIndexEntry[] {
+  if (!Array.isArray(data)) return [];
+
+  return data
+    .map(entry => normalizeBackendEntry((entry ?? {}) as BackendSearchEntry))
+    .filter((entry): entry is SearchIndexEntry => entry !== null);
+}

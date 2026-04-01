@@ -2,6 +2,7 @@
 import '../styles/style.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import AppScripts from '../components/layout/AppScripts.astro';
 import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
@@ -28,8 +29,7 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     
     <meta name="cyberfyx-api-base" content={import.meta.env.PUBLIC_API_BASE ?? ''}>
 
@@ -37,11 +37,8 @@ const {
 
     <script is:inline>
       (function(){
-        document.documentElement.removeAttribute('data-theme');
-        document.documentElement.style.colorScheme = 'light';
-        try {
-          localStorage.setItem('cyberfyx-theme', 'light');
-        } catch (_) {}
+        const t = localStorage.getItem('cyberfyx-theme') || 'light';
+        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
       })();
     </script>
   </head>
@@ -53,12 +50,6 @@ const {
     </main>
 
     <Footer />
-
-    <script>
-      import '../scripts/theme.ts';
-      import '../scripts/nav.ts';
-      import '../scripts/animations.ts';
-      import '../scripts/search.ts';
-    </script>
+    <AppScripts />
   </body>
 </html>

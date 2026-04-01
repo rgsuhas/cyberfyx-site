@@ -1,35 +1,133 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import FooterCta from '../components/FooterCta.astro';
 ---
 
 <BaseLayout 
-  title="About Cyberfyx | Advisory, Delivery, and Operational Depth"
-  description="We empower businesses to operate confidently with secure, compliant, and resilient digital environments."
+  title="About Cyberfyx | Cybersecurity & IT Solutions Leader"
+  description="Learn about Cyberfyx: our mission to empower businesses with security, compliance, and operational resilience."
 >
-  <PageHero 
-    eyebrow="Company Overview"
-    headline="About Cyberfyx"
-    lede="A globally trusted leader in cybersecurity and smart IT management."
-  >
-
-  </PageHero>
-
-  <section class="section">
+  <!-- Hero Section -->
+  <section class="page-hero">
     <div class="container">
-      <div class="grid grid-2 gap-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-         <div class="fade-up">
-           <h2>Vision</h2>
-           <p>We empower businesses to operate confidently with secure, compliant, and resilient digital environments—whether on-premises, in the cloud, or hybrid.</p>
-         </div>
-         <div class="fade-up delay-100">
-           <h2>Mission</h2>
-           <p>We help enterprises stay compliant, reduce risk, and optimize operations through expert consulting, automation, and managed services.</p>
-         </div>
+      <div class="page-hero-layout" style="grid-template-columns: 1fr;">
+        <div class="fade-up">
+          <div class="eyebrow">About</div>
+          <h1>About <span class="text-gradient">Cyberfyx</span></h1>
+          <p class="lede">A globally trusted leader in cybersecurity and smart IT management, empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <FooterCta />
+  <!-- Mission & Vision -->
+  <section style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="grid grid-2" style="gap: 4rem;">
+        <div class="fade-up">
+          <h2 style="margin-bottom: 1.5rem;">Our <span class="text-gradient">Mission</span></h2>
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">We help enterprises stay compliant, reduce risk, and optimize operations through expert consulting, automation, and managed services. Our mission is to make enterprise security accessible, effective, and aligned with business objectives.</p>
+          <p style="font-size: 1.1rem;">Every organization deserves security solutions that protect assets without hindering operations. We deliver exactly that.</p>
+        </div>
+
+        <div class="fade-up delay-100">
+          <h2 style="margin-bottom: 1.5rem;">Our <span class="text-gradient">Vision</span></h2>
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">We envision a world where organizations operate confidently with secure, compliant, and resilient digital environments—whether on-premises, in the cloud, or hybrid.</p>
+          <p style="font-size: 1.1rem;">By combining cutting-edge technology, expert guidance, and industry best practices, we enable businesses to focus on growth while we secure their future.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Values -->
+  <section>
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Our <span class="text-gradient">Core Values</span></h2>
+        <p>Guiding principles that drive everything we do.</p>
+      </div>
+
+      <div class="grid grid-3" style="gap: 2rem;">
+        <div class="glass-card fade-up">
+          <div class="service-icon"><i class="fa-solid fa-lock"></i></div>
+          <h3>Security First</h3>
+          <p>Every decision, every implementation, every process prioritizes security. We don't compromise on protection.</p>
+        </div>
+        <div class="glass-card fade-up delay-100">
+          <div class="service-icon"><i class="fa-solid fa-handshake"></i></div>
+          <h3>Trusted Partnership</h3>
+          <p>We're not just vendors—we're partners invested in your long-term success. Your goals are our goals.</p>
+        </div>
+        <div class="glass-card fade-up delay-200">
+          <div class="service-icon"><i class="fa-solid fa-lightbulb"></i></div>
+          <h3>Innovation</h3>
+          <p>We stay ahead of evolving threats and emerging technologies to deliver cutting-edge solutions.</p>
+        </div>
+        <div class="glass-card fade-up delay-300">
+          <div class="service-icon"><i class="fa-solid fa-users"></i></div>
+          <h3>People-Centric</h3>
+          <p>Great security requires great people. We invest in our team and in empowering your organization's security culture.</p>
+        </div>
+        <div class="glass-card fade-up delay-100">
+          <div class="service-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Results-Driven</h3>
+          <p>We measure success by your reduced risk, improved compliance, and operational efficiency.</p>
+        </div>
+        <div class="glass-card fade-up delay-200">
+          <div class="service-icon"><i class="fa-solid fa-globe"></i></div>
+          <h3>Global Perspective</h3>
+          <p>Understanding regulations, threats, and best practices across global markets ensures locally-relevant solutions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Why Choose <span class="text-gradient">Cyberfyx</span>?</h2>
+        <p>What sets us apart in the cybersecurity landscape.</p>
+      </div>
+
+      <div class="grid grid-2" style="gap: 3rem;">
+        <div class="glass-card fade-up" style="padding: 2.5rem;">
+          <div class="service-icon" style="margin-bottom: 1rem;"><i class="fa-solid fa-brain"></i></div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Specialized Expertise</h3>
+          <p>Our team brings deep domain expertise across cybersecurity, IT operations, compliance, and various industry verticals. We don't offer generic solutions—every engagement is tailored.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-100" style="padding: 2.5rem;">
+          <div class="service-icon" style="margin-bottom: 1rem;"><i class="fa-solid fa-handshake"></i></div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Authorized Partnerships</h3>
+          <p>As authorized solution partners with leading security and IT management platforms, we bring official training, certifications, and vendor support to every project.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-200" style="padding: 2.5rem;">
+          <div class="service-icon" style="margin-bottom: 1rem;"><i class="fa-solid fa-chart-line"></i></div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Proven Track Record</h3>
+          <p>Hundreds of successful implementations across diverse industries, from startups to enterprises, with measurable results in risk reduction and compliance.</p>
+        </div>
+
+        <div class="glass-card fade-up delay-300" style="padding: 2.5rem;">
+          <div class="service-icon" style="margin-bottom: 1rem;"><i class="fa-solid fa-rocket"></i></div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Speed to Value</h3>
+          <p>We deliver rapid assessments, quick implementations, and ongoing optimization—turning security strategy into operational reality faster than you'd expect.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section style="text-align: center;">
+    <div class="container">
+      <div class="fade-up">
+        <h2 style="margin-bottom: 1rem;">Join Hundreds of Organizations<br />Trusting <span class="text-gradient">Cyberfyx</span> for Security</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Whether you're looking to strengthen your security posture, achieve compliance, or transform your IT operations, we're ready to partner with you on the journey.</p>
+        <a href="/contact" class="btn btn-primary hero-btn" style="min-width: 220px; padding: 1rem 2rem;">
+          <span>Start Your Journey with Us</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

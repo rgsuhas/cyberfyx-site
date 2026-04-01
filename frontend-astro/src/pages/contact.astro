@@ -34,29 +34,34 @@ const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
             <h1 class="mb-2">Get in <span class="text-gradient">Touch</span></h1>
             <p class="lede mb-3">Whether you need an immediate cybersecurity assessment, managed endpoint services, or ISO consultation, our team is ready to assist you.</p>
 
-            <div class="flex gap-1 mb-2">
-                <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">📍</div>
-                <div>
-                    <h4 class="mb-1">Office Location</h4>
+            <a href={profile.map_url} target="_blank" rel="noopener noreferrer" class="contact-info-item" style="text-decoration: none;">
+                <div class="contact-info-icon">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <div class="contact-info-content">
+                    <h4>Office Location</h4>
                     <p>
-                      <a href={profile.map_url} target="_blank" rel="noopener noreferrer">{profile.headquarters_name}</a><br />
                       {profile.headquarters_address}
                     </p>
                 </div>
-            </div>
+            </a>
 
-            <div class="flex gap-1 mb-2">
-                <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">📞</div>
-                <div>
-                    <h4 class="mb-1">Phone Number</h4>
+            <div class="contact-info-item">
+                <div class="contact-info-icon">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
+                <div class="contact-info-content">
+                    <h4>Phone Number</h4>
                     <p><a href={telHref}>{profile.primary_phone}</a></p>
                 </div>
             </div>
 
-            <div class="flex gap-1 mb-2">
-                <div class="service-icon" style="flex-shrink: 0; width: 50px; height: 50px;">✉️</div>
-                <div>
-                    <h4 class="mb-1">Email Address</h4>
+            <div class="contact-info-item">
+                <div class="contact-info-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div class="contact-info-content">
+                    <h4>Email Address</h4>
                     <p><a href={`mailto:${profile.sales_email}`}>{profile.sales_email}</a></p>
                 </div>
             </div>
@@ -68,8 +73,3 @@ const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  import '../scripts/animations.ts';
-  import '../scripts/contact-form.ts';
-</script>

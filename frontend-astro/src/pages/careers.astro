@@ -1,44 +1,132 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PageHero from '../components/PageHero.astro';
-import FooterCta from '../components/FooterCta.astro';
-import GlassCard from '../components/GlassCard.astro';
 ---
 
 <BaseLayout 
-  title="Careers | Cyberfyx"
-  description="Join our team of cybersecurity experts, consultants, and IT management professionals."
+  title="Careers at Cyberfyx | Join Our Security & IT Team"
+  description="Join our team of cybersecurity experts, consultants, and IT management professionals solving mission-critical security challenges."
 >
-  <PageHero 
-    eyebrow="Join Our Team"
-    headline="Careers at Cyberfyx"
-    lede="We are always looking for driven professionals to join our advisory, delivery, and operations teams."
-  >
-    <div slot="aside" class="flex-col gap-1">
-      <h3 style="font-size: 1.25rem;">Why Cyberfyx?</h3>
-      <p style="font-size: 0.95rem;">Work on mission-critical security challenges across diverse sectors with an expert team.</p>
-    </div>
-  </PageHero>
-
-  <section class="section">
+  <!-- Hero Section -->
+  <section class="page-hero">
     <div class="container">
-      <div class="grid gap-2" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-        <GlassCard className="fade-up">
-          <span class="mono">Open Role</span>
-          <h4 class="mt-1 mb-1">Security Consultant</h4>
-          <p>Join our advisory practice helping clients navigate ISO, NIST, and compliance frameworks.</p>
-          <a class="btn btn-outline mt-1" href="mailto:careers@cyberfyx.com">Apply Now</a>
-        </GlassCard>
-        
-        <GlassCard className="fade-up delay-100">
-          <span class="mono">Open Role</span>
-          <h4 class="mt-1 mb-1">Endpoint Operations Engineer</h4>
-          <p>Manage enterprise UEM deployments, automation, and continuous monitoring.</p>
-          <a class="btn btn-outline mt-1" href="mailto:careers@cyberfyx.com">Apply Now</a>
-        </GlassCard>
+      <div class="page-hero-layout" style="grid-template-columns: 1fr;">
+        <div class="fade-up">
+          <div class="eyebrow">Careers</div>
+          <h1>Join Our Team at <span class="text-gradient">Cyberfyx</span></h1>
+          <p class="lede">We're hiring security professionals, consultants, and IT specialists to help organizations protect their digital future. Join our growing team and make a real impact.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <FooterCta />
+  <!-- Why Join Us -->
+  <section style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Why Work at <span class="text-gradient">Cyberfyx</span>?</h2>
+        <p>We're more than just a cybersecurity company—we're a place where talented people solve real problems.</p>
+      </div>
+
+      <div class="grid grid-3" style="gap: 2rem;">
+        <div class="glass-card fade-up">
+          <h3>Mission-Critical Work</h3>
+          <p>Your work directly impacts organizations' security posture. You'll solve real challenges, not just perform routine tasks.</p>
+        </div>
+        <div class="glass-card fade-up delay-100">
+          <h3>Growth Opportunities</h3>
+          <p>We invest in your professional development through certifications, training, and exposure to diverse security domains and technologies.</p>
+        </div>
+        <div class="glass-card fade-up delay-200">
+          <h3>Expert Team</h3>
+          <p>Work alongside security experts, architects, and thought leaders who are passionate about cybersecurity and willing to mentor.</p>
+        </div>
+        <div class="glass-card fade-up delay-300">
+          <h3>Competitive Benefits</h3>
+          <p>Competitive salary, health insurance, continuous learning budget, and a supportive work environment.</p>
+        </div>
+        <div class="glass-card fade-up delay-100">
+          <h3>Diverse Sectors</h3>
+          <p>Work across healthcare, finance, manufacturing, government, and more—each sector brings unique security challenges.</p>
+        </div>
+        <div class="glass-card fade-up delay-200">
+          <h3>Culture of Excellence</h3>
+          <p>We value expertise, collaboration, innovation, and integrity. We're building a team that sets industry standards.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Positions -->
+  <section>
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Open <span class="text-gradient">Positions</span></h2>
+        <p>We're actively hiring for the following roles.</p>
+      </div>
+
+      <div class="grid grid-2" style="gap: 2rem;">
+        <div class="glass-card fade-up">
+          <div class="eyebrow" style="margin-bottom: 0.75rem;">Consulting</div>
+          <h3 style="margin-bottom: 0.75rem;">Senior Security Consultant</h3>
+          <p style="margin-bottom: 1.5rem;">Lead security assessments, compliance implementations, and advisory engagements. You'll work with C-suite executives to shape organizational security strategies.</p>
+          <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>8+ years security/compliance experience</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>ISO 27001/NIST/PCI-DSS expertise</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>Strong communication skills</li>
+          </ul>
+          <a href="mailto:careers@cyberfyx.net" class="btn btn-outline" style="width: 100%; text-align: center;">Apply</a>
+        </div>
+
+        <div class="glass-card fade-up delay-100">
+          <div class="eyebrow" style="margin-bottom: 0.75rem;">Engineering</div>
+          <h3 style="margin-bottom: 0.75rem;">Endpoint Management Engineer</h3>
+          <p style="margin-bottom: 1.5rem;">Design and deploy UEM solutions for enterprise clients. You'll configure, test, and optimize endpoint management platforms at scale.</p>
+          <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>5+ years endpoint/UEM experience</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>Intune, MobileIron, or similar platform expertise</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>Scripting and automation skills</li>
+          </ul>
+          <a href="mailto:careers@cyberfyx.net" class="btn btn-outline" style="width: 100%; text-align: center;">Apply</a>
+        </div>
+
+        <div class="glass-card fade-up delay-200">
+          <div class="eyebrow" style="margin-bottom: 0.75rem;">Security Services</div>
+          <h3 style="margin-bottom: 0.75rem;">Penetration Tester</h3>
+          <p style="margin-bottom: 1.5rem;">Conduct security assessments, perform penetration tests, and develop detailed reports with actionable remediation recommendations.</p>
+          <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>CEH, OSCP, or similar certification</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>3+ years penetration testing experience</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>Knowledge of offensive security tools</li>
+          </ul>
+          <a href="mailto:careers@cyberfyx.net" class="btn btn-outline" style="width: 100%; text-align: center;">Apply</a>
+        </div>
+
+        <div class="glass-card fade-up delay-300">
+          <div class="eyebrow" style="margin-bottom: 0.75rem;">Operations</div>
+          <h3 style="margin-bottom: 0.75rem;">Security Operations Analyst</h3>
+          <p style="margin-bottom: 1.5rem;">Monitor security events, investigate incidents, and provide recommendations for security improvements. You'll be our eyes and ears 24/7.</p>
+          <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>2+ years SOC/Security operations experience</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>SIEM platform knowledge</li>
+            <li style="margin-bottom: 0.5rem;"><i class="fa-solid fa-check" style="color: var(--accent-secondary); margin-right: 0.5rem;"></i>Incident handling experience</li>
+          </ul>
+          <a href="mailto:careers@cyberfyx.net" class="btn btn-outline" style="width: 100%; text-align: center;">Apply</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Info -->
+  <section style="background: var(--bg-secondary); text-align: center;">
+    <div class="container">
+      <div class="fade-up">
+        <h2 style="margin-bottom: 1rem;">Don't See Your Role?</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">If you're a talented security professional or IT expert interested in joining our team, we'd love to hear from you. Send us your resume and what you're passionate about.</p>
+        <a href="mailto:careers@cyberfyx.net" class="btn btn-primary hero-btn" style="min-width: 220px; padding: 1rem 2rem;">
+          <span>Send Your Resume</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

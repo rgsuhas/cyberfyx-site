@@ -1,59 +1,19 @@
 ---
+import BrandLogo from './BrandLogo.astro';
+import PrimaryNav from './header/PrimaryNav.astro';
+import SiteSearch from './header/SiteSearch.astro';
+
 const pathname = Astro.url.pathname;
 const currentPath = pathname.replace(/^\/|\/$/g, '');
-
-const isActive = (path: string) => {
-  if (path === '' && currentPath === '') return 'active';
-  if (path !== '' && currentPath.startsWith(path)) return 'active';
-  return '';
-};
 ---
 
 <header id="header" class="site-header">
   <div class="container nav-container">
-      <a href="/" class="logo" aria-label="Cyberfyx home">
-          <img src="/logo.png" alt="Cyberfyx" class="logo-img" />
-      </a>
-
-      <nav id="nav-menu" class="nav-menu">
-          <a href="/" class={`nav-link ${isActive('')}`}>Home</a>
-          <a href="/about" class={`nav-link ${isActive('about')}`}>About</a>
-          <div class="nav-item has-dropdown">
-              <a href="/services" class={`nav-link ${isActive('services')}`}>Services <i class="fa-solid fa-chevron-down" style="font-size: 0.7em; margin-left: 3px; transition: transform 0.2s;"></i></a>
-              <div class="dropdown-menu">
-                  <a href="/services" class="dropdown-item">All Services</a>
-                  <a href="/services/cybersecurity" class="dropdown-item">Cybersecurity</a>
-                  <a href="/services/it-security" class="dropdown-item">IT Security</a>
-                  <a href="/services/endpoint-management" class="dropdown-item">Endpoint Management</a>
-                  <a href="/services/core-industry" class="dropdown-item">Core Industry</a>
-                  <a href="/services/training" class="dropdown-item">Training</a>
-              </div>
-          </div>
-          <a href="/industries" class={`nav-link ${isActive('industries')}`}>Industries</a>
-          <a href="/careers" class={`nav-link ${isActive('careers')}`}>Careers</a>
-          <a href="/contact" class={`nav-link ${isActive('contact')}`}>Contact</a>
-      </nav>
+      <BrandLogo imageHeight={40} />
+      <PrimaryNav currentPath={currentPath} />
 
       <div class="nav-actions">
-          <div id="site-search" class="site-search" role="search">
-              <div class="site-search-inline">
-                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                  <input
-                      id="site-search-input"
-                      class="site-search-input"
-                      type="search"
-                      placeholder="Search Cyberfyx"
-                      aria-label="Search Cyberfyx"
-                      autocomplete="off"
-                      spellcheck="false"
-                  />
-              </div>
-              <div class="site-search-dropdown" id="site-search-dropdown">
-                  <div id="site-search-results" class="site-search-results">
-                      <div class="site-search-empty">Type at least 2 letters to search.</div>
-                  </div>
-              </div>
-          </div>
+          <SiteSearch />
           <a href="/contact" class="btn btn-quote">Get Quote</a>
           <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle menu">
               <i class="fa-solid fa-bars"></i>

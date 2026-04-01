@@ -1,20 +1,40 @@
 export {};
 
 const STATIC_INTEREST_OPTIONS = [
-  { slug: 'cybersecurity-services',       label: 'Cybersecurity' },
-  { slug: 'it-security-and-continuity',   label: 'IT Security' },
+  { slug: 'cybersecurity-services', label: 'Cybersecurity' },
+  { slug: 'it-security-and-continuity', label: 'IT Security' },
   { slug: 'endpoint-management-services', label: 'Endpoint Management' },
-  { slug: 'core-industry-services',       label: 'Core Industry Services' },
-  { slug: 'training',                     label: 'Training' },
-  { slug: 'general-inquiry',              label: 'General Inquiry' },
+  { slug: 'core-industry-services', label: 'Core Industry Services' },
+  { slug: 'training', label: 'Training' },
+  { slug: 'general-inquiry', label: 'General Inquiry' },
 ];
 
+const FIELD_MESSAGES: Record<string, { required: string; invalid?: string }> = {
+  name: {
+    required: 'Please fill out this field.',
+  },
+  email: {
+    required: 'Please fill out this field.',
+    invalid: 'Please enter a valid email address.',
+  },
+  subject: {
+    required: 'Please select an item in the list.',
+  },
+  message: {
+    required: 'Please fill out this field.',
+  },
+};
+
 function populateSelect(select: HTMLSelectElement, options: Array<{ slug: string; label: string }>) {
+  const currentValue = select.value;
   select.innerHTML = '<option value="" disabled selected></option>';
   options.forEach(opt => {
     const el = document.createElement('option');
     el.value = opt.slug;
     el.textContent = opt.label;
+    if (currentValue && currentValue === opt.slug) {
+      el.selected = true;
+    }
     select.appendChild(el);
   });
 }
@@ -22,15 +42,18 @@ function populateSelect(select: HTMLSelectElement, options: Array<{ slug: string
 async function loadInterestOptions(apiBase: string, select: HTMLSelectElement) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 4000);
+
   try {
     const res = await fetch(`${apiBase}/api/v1/public/site/contact-profile`, {
       signal: controller.signal,
     });
     clearTimeout(timer);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
     const profile = await res.json();
     const options: Array<{ slug: string; label: string }> = profile.interest_options ?? [];
     if (options.length === 0) throw new Error('empty');
+
     populateSelect(select, options);
   } catch {
     clearTimeout(timer);
@@ -38,147 +61,241 @@ async function loadInterestOptions(apiBase: string, select: HTMLSelectElement) {
   }
 }
 
-/** Reads UTM params and page context for attribution tracking. */
 function getTrackingFields() {
   const params = new URLSearchParams(window.location.search);
   return {
     source_page: window.location.pathname,
     referrer_url: document.referrer || undefined,
-    utm_source:   params.get('utm_source')   || undefined,
-    utm_medium:   params.get('utm_medium')   || undefined,
+    utm_source: params.get('utm_source') || undefined,
+    utm_medium: params.get('utm_medium') || undefined,
     utm_campaign: params.get('utm_campaign') || undefined,
-    utm_content:  params.get('utm_content')  || undefined,
-    utm_term:     params.get('utm_term')     || undefined,
+    utm_content: params.get('utm_content') || undefined,
+    utm_term: params.get('utm_term') || undefined,
   };
 }
 
-function setStatus(
-  statusDiv: HTMLDivElement,
-  kind: 'success' | 'error',
-  message: string,
-  allowHtml = false,
-) {
-  if (allowHtml) {
-    statusDiv.innerHTML = message;
+function ensureStatusElement(form: HTMLFormElement) {
+  let statusDiv = form.querySelector('#form-status, [data-form-status]') as HTMLDivElement | null;
+  if (statusDiv) return statusDiv;
+
+  statusDiv = document.createElement('div');
+  statusDiv.className = 'cf-status';
+  statusDiv.dataset.formStatus = 'public';
+  statusDiv.style.display = 'none';
+  statusDiv.style.marginTop = '1rem';
+  const submitBtn = form.querySelector('#submit-btn, button[type="submit"]');
+  if (submitBtn?.parentElement === form) {
+    form.insertBefore(statusDiv, submitBtn);
   } else {
-    statusDiv.textContent = message;
+    form.appendChild(statusDiv);
   }
 
-  statusDiv.style.backgroundColor =
-    kind === 'success' ? 'rgba(98, 151, 132, 0.1)' : 'rgba(255, 107, 53, 0.1)';
-  statusDiv.style.color = kind === 'success' ? 'var(--accent-soft)' : 'var(--accent-tertiary)';
-  statusDiv.style.display = 'block';
+  return statusDiv;
 }
 
-function getStringField(formData: FormData, name: string) {
-  const value = formData.get(name);
-  return typeof value === 'string' ? value.trim() : '';
+function getFieldContainer(field: HTMLElement) {
+  return field.closest('.cf-field, .form-group') as HTMLElement | null;
 }
 
-async function getErrorMessage(response: Response) {
-  try {
-    const payload = await response.json();
-    const detailMessages = Array.isArray(payload?.error?.details)
-      ? payload.error.details
-          .map((detail: { message?: unknown }) => (typeof detail?.message === 'string' ? detail.message : ''))
-          .filter(Boolean)
-      : [];
+function getFieldWarning(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  const container = getFieldContainer(field) ?? field.parentElement;
+  if (!container) return null;
 
-    if (typeof payload?.error?.message === 'string' && payload.error.message) {
-      return detailMessages.length > 0
-        ? `${payload.error.message} ${detailMessages.join(' ')}`
-        : payload.error.message;
+  return container.querySelector('[data-field-warning]') as HTMLDivElement | null;
+}
+
+function setFieldError(
+  field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+  message?: string,
+) {
+  const container = getFieldContainer(field);
+
+  field.classList.add('field-invalid');
+  field.setAttribute('aria-invalid', 'true');
+  container?.classList.add('field-has-error');
+  if (message) {
+    field.setCustomValidity(message);
+  }
+}
+
+function clearFieldError(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  const warning = getFieldWarning(field);
+  const container = getFieldContainer(field);
+
+  field.classList.remove('field-invalid');
+  field.removeAttribute('aria-invalid');
+  field.setCustomValidity('');
+  container?.classList.remove('field-has-error');
+
+  if (warning) {
+    warning.textContent = '';
+    warning.style.display = 'none';
+  }
+}
+
+function getValidationMessage(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  const config = FIELD_MESSAGES[field.name] ?? {
+    required: 'Required field.',
+    invalid: 'Invalid value.',
+  };
+
+  if (field.validity.valueMissing) return config.required;
+  if (field.validity.typeMismatch || field.validity.patternMismatch) {
+    return config.invalid ?? 'Please enter a valid value.';
+  }
+
+  return 'Check this field.';
+}
+
+function syncNativeValidation(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  clearFieldError(field);
+
+  if (field.validity.valueMissing) {
+    setFieldError(field, getValidationMessage(field));
+    return false;
+  }
+
+  if (field.validity.typeMismatch || field.validity.patternMismatch) {
+    setFieldError(field, getValidationMessage(field));
+    return false;
+  }
+
+  return true;
+}
+
+function validateField(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+  return syncNativeValidation(field);
+}
+
+function validateForm(form: HTMLFormElement): {
+  valid: boolean;
+  firstInvalidField: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+} {
+  const fields = Array.from(
+    form.querySelectorAll('input, select, textarea')
+  ) as Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+
+  let firstInvalidField: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null = null;
+
+  fields.forEach(field => {
+    if (!validateField(field) && !firstInvalidField) {
+      firstInvalidField = field;
     }
-  } catch {
-    // Ignore non-JSON error bodies and fall through to the generic message.
-  }
+  });
 
-  return `There was an error submitting your request (${response.status}).`;
+  return { valid: firstInvalidField === null, firstInvalidField };
 }
 
-function initContactForm() {
-  const form        = document.getElementById('contact-form')  as HTMLFormElement | null;
-  const statusDiv   = document.getElementById('form-status')   as HTMLDivElement | null;
-  const submitBtn   = document.getElementById('submit-btn')    as HTMLButtonElement | null;
-  const subjectSel  = document.getElementById('subject')       as HTMLSelectElement | null;
-
-  if (!form || !statusDiv || !submitBtn) return;
+function initContactForm(form: HTMLFormElement) {
   if (form.dataset.cfInit) return;
   form.dataset.cfInit = '1';
 
+  const statusDiv = ensureStatusElement(form);
+  const submitBtn = form.querySelector('#submit-btn, button[type="submit"]') as HTMLButtonElement | null;
+  const subjectSel = form.querySelector('#subject, select[name="subject"]') as HTMLSelectElement | null;
+  if (!submitBtn) return;
+
   const submitText = submitBtn.querySelector('.cf-submit-text') as HTMLElement | null;
+  const defaultSubmitText = (submitText?.textContent ?? submitBtn.textContent ?? 'Send Message').trim();
 
-  // API base: '' means same-origin (nginx proxy); a URL means dev/explicit backend.
-  // The meta tag always exists (baked in by BaseLayout), so we always try the API.
-  const metaTag  = document.querySelector('meta[name="cyberfyx-api-base"]');
-  const apiBase  = metaTag?.getAttribute('content') ?? '';
+  const metaTag = document.querySelector('meta[name="cyberfyx-api-base"]');
+  const apiBase = metaTag?.getAttribute('content') ?? '';
 
-  // Load interest options into the select (non-blocking)
-  if (subjectSel) loadInterestOptions(apiBase, subjectSel);
+  if (subjectSel) {
+    void loadInterestOptions(apiBase, subjectSel);
+  }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    statusDiv.style.display = 'none';
+  const fields = Array.from(
+    form.querySelectorAll('input, select, textarea')
+  ) as Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
+  fields.forEach(field => {
+    const eventName = field.tagName === 'SELECT' ? 'change' : 'input';
+    field.addEventListener(eventName, () => {
+      validateField(field);
+    });
+    field.addEventListener('blur', () => {
+      validateField(field);
+    });
+  });
 
-    const fd = new FormData(form);
-    const payload = {
-      name: getStringField(fd, 'name'),
-      email: getStringField(fd, 'email'),
-      interest_slug: getStringField(fd, 'subject'),
-      message: getStringField(fd, 'message'),
-      ...getTrackingFields(),
-    };
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    if (!payload.name || !payload.email || !payload.interest_slug || !payload.message) {
-      setStatus(statusDiv, 'error', 'Please complete all required fields before submitting.');
+    const { valid, firstInvalidField } = validateForm(form);
+    if (!valid) {
+      statusDiv.style.display = 'none';
+      if (firstInvalidField) {
+        firstInvalidField.reportValidity();
+      }
       return;
     }
 
     submitBtn.disabled = true;
-    if (submitText) submitText.textContent = 'Submitting...';
+    if (submitText) {
+      submitText.textContent = 'Submitting...';
+    } else {
+      submitBtn.textContent = 'Submitting...';
+    }
+    statusDiv.style.display = 'none';
 
     try {
+      const fd = new FormData(form);
+      const payload = {
+        name: fd.get('name'),
+        email: fd.get('email'),
+        interest_slug: fd.get('subject'),
+        message: fd.get('message'),
+        ...getTrackingFields(),
+      };
+
       const response = await fetch(`${apiBase}/api/v1/public/inquiries`, {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        const responseBody = await response.json().catch(() => null);
-        form.reset();
-        if (subjectSel) loadInterestOptions(apiBase, subjectSel);
-        setStatus(
-          statusDiv,
-          'success',
-          typeof responseBody?.message === 'string' && responseBody.message
-            ? responseBody.message
-            : 'Thank you! Your inquiry has been submitted successfully.',
-        );
-      } else {
-        throw new Error(await getErrorMessage(response));
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+
+      form.reset();
+      fields.forEach(field => clearFieldError(field));
+      if (subjectSel) {
+        void loadInterestOptions(apiBase, subjectSel);
+      }
+      statusDiv.textContent = 'Your inquiry has been received. The Cyberfyx team will review it shortly.';
+      statusDiv.style.backgroundColor = 'rgba(236, 240, 238, 0.95)';
+      statusDiv.style.color = '#1f2933';
+      statusDiv.style.border = '1px solid rgba(31, 41, 51, 0.05)';
+      statusDiv.style.display = 'block';
     } catch (err) {
       console.error('Submission error:', err);
-      const message =
-        err instanceof Error && err.message
-          ? `${err.message} If the issue continues, <a href="mailto:sales@cyberfyx.net">email us directly</a>.`
-          : 'There was an error submitting your request. Please try again or <a href="mailto:sales@cyberfyx.net">email us directly</a>.';
-      setStatus(statusDiv, 'error', message, true);
+      statusDiv.innerHTML =
+        'There was an error submitting your request. ' +
+        'Please try again or <a href="mailto:sales@cyberfyx.net">email us directly</a>.';
+      statusDiv.style.backgroundColor = 'rgba(255, 107, 53, 0.1)';
+      statusDiv.style.color = 'var(--accent-tertiary)';
+      statusDiv.style.border = '1px solid rgba(255, 107, 53, 0.18)';
+      statusDiv.style.display = 'block';
     } finally {
       submitBtn.disabled = false;
-      if (submitText) submitText.textContent = 'Send Message';
+      if (submitText) {
+        submitText.textContent = defaultSubmitText;
+      } else {
+        submitBtn.textContent = defaultSubmitText;
+      }
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', initContactForm);
-document.addEventListener('astro:page-load', initContactForm);
+function initContactForms() {
+  const forms = Array.from(
+    document.querySelectorAll('form[data-inquiry-form="public"], form#contact-form')
+  ) as HTMLFormElement[];
+
+  forms.forEach(form => initContactForm(form));
+}
+
+document.addEventListener('DOMContentLoaded', initContactForms);
+document.addEventListener('astro:page-load', initContactForms);

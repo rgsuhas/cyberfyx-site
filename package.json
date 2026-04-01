@@ -1,7 +1,6 @@
 {
-  "name": "cyberfyx-site-main",
+  "name": "cyberfyx-website",
   "private": true,
-  "version": "1.0.0",
   "scripts": {
     "start": "node scripts/start-all.mjs"
   }
