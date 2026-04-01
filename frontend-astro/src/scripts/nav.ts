@@ -1,18 +1,47 @@
 export {};
 
 function initNav() {
-  const header = document.getElementById('header');
+  const headerNode = document.getElementById('header');
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const navMenu = document.getElementById('nav-menu');
+  const mobileMenuCloseBtn = document.getElementById('mobile-menu-close');
   const backToTop = document.getElementById('back-to-top');
+  if (!headerNode || headerNode.dataset.navInit === '1') return;
+  const header: HTMLElement = headerNode;
+  header.dataset.navInit = '1';
+
   let lastScroll = 0;
+  const mobileBreakpoint = window.matchMedia('(max-width: 1100px)');
+
+  function syncMenuIcon(isOpen: boolean) {
+    const icon = mobileMenuBtn?.querySelector('i');
+    if (!icon) return;
+    icon.classList.toggle('fa-bars', !isOpen);
+    icon.classList.toggle('fa-xmark', isOpen);
+    mobileMenuBtn?.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  function closeMobileMenu() {
+    navMenu?.classList.remove('active');
+    document.body.classList.remove('menu-open');
+    syncMenuIcon(false);
+  }
+
+  function openMobileMenu() {
+    navMenu?.classList.add('active');
+    document.body.classList.add('menu-open');
+    header.classList.remove('hidden');
+    syncMenuIcon(true);
+  }
+
+  closeMobileMenu();
 
   // Scroll hide/show + scrolled class logic
   window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
     if (currentScroll > 50) {
       header?.classList.add('scrolled');
-      if (currentScroll > lastScroll && currentScroll > 200) {
+      if (!document.body.classList.contains('menu-open') && currentScroll > lastScroll && currentScroll > 200) {
         header?.classList.add('hidden');
       } else {
         header?.classList.remove('hidden');
@@ -34,26 +63,57 @@ function initNav() {
   });
 
   // Mobile menu toggle
-  mobileMenuBtn?.addEventListener('click', () => {
-    navMenu?.classList.toggle('active');
-    document.body.classList.toggle('menu-open');
-    // Toggle icon
-    const icon = mobileMenuBtn.querySelector<HTMLElement>('.mobile-menu-icon');
-    if (icon) {
-      icon.textContent = navMenu?.classList.contains('active') ? '✕' : '☰';
+  mobileMenuBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    if (!mobileBreakpoint.matches) {
+      closeMobileMenu();
+      return;
     }
+
+    const isOpen = navMenu?.classList.contains('active') ?? false;
+    if (isOpen) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  });
+
+  mobileMenuCloseBtn?.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeMobileMenu();
+    mobileMenuBtn?.focus();
   });
 
   // Close mobile menu when clicking a link
   navMenu?.querySelectorAll('.nav-link, .dropdown-item').forEach(link => {
     link.addEventListener('click', () => {
-      navMenu.classList.remove('active');
-      document.body.classList.remove('menu-open');
-      const icon = mobileMenuBtn?.querySelector<HTMLElement>('.mobile-menu-icon');
-      if (icon) {
-        icon.textContent = '☰';
-      }
+      closeMobileMenu();
     });
+  });
+
+  document.addEventListener('click', event => {
+    const target = event.target as Node;
+    if (!mobileBreakpoint.matches || !navMenu?.classList.contains('active')) return;
+    if (navMenu.contains(target) || mobileMenuBtn?.contains(target)) return;
+    closeMobileMenu();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && navMenu?.classList.contains('active')) {
+      closeMobileMenu();
+      mobileMenuBtn?.focus();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    header.classList.remove('hidden');
+    closeMobileMenu();
+  });
+
+  window.addEventListener('pageshow', () => {
+    header.classList.remove('hidden');
+    closeMobileMenu();
   });
 }
 

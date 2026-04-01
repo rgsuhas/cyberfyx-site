@@ -28,6 +28,16 @@ class SeedData:
 
 
 @pytest.fixture(scope="session", autouse=True)
+def _disable_rate_limits() -> Iterator[None]:
+    """Disable slowapi in-memory rate limits for the test session."""
+    from app.core.rate_limit import limiter
+
+    limiter.enabled = False
+    yield
+    limiter.enabled = True
+
+
+@pytest.fixture(scope="session", autouse=True)
 def backend_env() -> Iterator[Path]:
     backend_root = Path(__file__).resolve().parents[1]
     db_path = backend_root / ".test-cyberfyx.db"

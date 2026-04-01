@@ -1,9 +1,11 @@
 export function initHeroGrid() {
-  const canvas = document.getElementById('hero-grid-canvas') as HTMLCanvasElement;
-  if (!canvas) return;
+  const canvasElement = document.getElementById('hero-grid-canvas') as HTMLCanvasElement | null;
+  if (!canvasElement) return;
+  const canvas: HTMLCanvasElement = canvasElement;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
+  const context: CanvasRenderingContext2D = ctx;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const nodes: any[] = [];
@@ -20,7 +22,7 @@ export function initHeroGrid() {
     height = Math.max(320, Math.floor(rect.height));
     canvas.width = Math.floor(width * ratio);
     canvas.height = Math.floor(height * ratio);
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
     seedNodes();
   }
 
@@ -33,36 +35,36 @@ export function initHeroGrid() {
         vx: (Math.random() - 0.5) * 0.12,
         vy: (Math.random() - 0.5) * 0.12,
         r: 1.8 + Math.random() * 2.2,
-        hue: i % 4 === 0 ? "orange" : "purple"
+        hue: i % 4 === 0 ? 'orange' : 'purple',
       });
     }
   }
 
   function drawBackdrop() {
-    ctx.clearRect(0, 0, width, height);
+    context.clearRect(0, 0, width, height);
 
-    const bg = ctx.createLinearGradient(0, 0, width, height);
+    const bg = context.createLinearGradient(0, 0, width, height);
     bg.addColorStop(0, 'rgba(255,255,255,0.008)');
     bg.addColorStop(1, 'rgba(53,29,117,0.012)');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, width, height);
+    context.fillStyle = bg;
+    context.fillRect(0, 0, width, height);
 
-    ctx.strokeStyle = 'rgba(90,74,147,0.055)';
-    ctx.lineWidth = 1;
+    context.strokeStyle = 'rgba(90,74,147,0.055)';
+    context.lineWidth = 1;
 
     const gap = 28;
     for (let x = 0; x <= width; x += gap) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
-      ctx.stroke();
+      context.beginPath();
+      context.moveTo(x, 0);
+      context.lineTo(x, height);
+      context.stroke();
     }
 
     for (let y = 0; y <= height; y += gap) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
+      context.beginPath();
+      context.moveTo(0, y);
+      context.lineTo(width, y);
+      context.stroke();
     }
   }
 
@@ -77,14 +79,14 @@ export function initHeroGrid() {
         if (distance > 120) continue;
 
         const alpha = (1 - distance / 120) * 0.28;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = a.hue === 'orange' || b.hue === 'orange'
+        context.beginPath();
+        context.moveTo(a.x, a.y);
+        context.lineTo(b.x, b.y);
+        context.strokeStyle = a.hue === 'orange' || b.hue === 'orange'
           ? `rgba(231, 135, 49, ${alpha * 0.8})`
           : `rgba(90, 74, 147, ${alpha})`;
-        ctx.lineWidth = 1.1;
-        ctx.stroke();
+        context.lineWidth = 1.1;
+        context.stroke();
       }
     }
   }
@@ -95,20 +97,20 @@ export function initHeroGrid() {
         ? 'rgba(231, 135, 49, 1)'
         : 'rgba(53, 29, 117, 1)';
 
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, node.r + 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = node.hue === 'orange'
+      context.beginPath();
+      context.arc(node.x, node.y, node.r + 5.5, 0, Math.PI * 2);
+      context.fillStyle = node.hue === 'orange'
         ? 'rgba(231, 135, 49, 0.12)'
         : 'rgba(90, 74, 147, 0.13)';
-      ctx.fill();
+      context.fill();
 
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = 16;
-      ctx.fill();
-      ctx.shadowBlur = 0;
+      context.beginPath();
+      context.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+      context.fillStyle = color;
+      context.shadowColor = color;
+      context.shadowBlur = 16;
+      context.fill();
+      context.shadowBlur = 0;
     });
   }
 
@@ -116,26 +118,26 @@ export function initHeroGrid() {
     const primarySweep = (sweepOffset % (width * 1.4)) - width * 0.4;
     const secondarySweep = ((sweepOffset + width * 0.55) % (width * 1.6)) - width * 0.6;
 
-    const gradientA = ctx.createLinearGradient(primarySweep - 80, 0, primarySweep + 120, 0);
+    const gradientA = context.createLinearGradient(primarySweep - 80, 0, primarySweep + 120, 0);
     gradientA.addColorStop(0, 'rgba(231, 135, 49, 0)');
     gradientA.addColorStop(0.5, 'rgba(231, 135, 49, 0.08)');
     gradientA.addColorStop(1, 'rgba(231, 135, 49, 0)');
-    ctx.fillStyle = gradientA;
-    ctx.fillRect(primarySweep - 80, 0, 200, height);
+    context.fillStyle = gradientA;
+    context.fillRect(primarySweep - 80, 0, 200, height);
 
-    const gradientB = ctx.createLinearGradient(secondarySweep - 120, 0, secondarySweep + 140, 0);
+    const gradientB = context.createLinearGradient(secondarySweep - 120, 0, secondarySweep + 140, 0);
     gradientB.addColorStop(0, 'rgba(53, 29, 117, 0)');
     gradientB.addColorStop(0.5, 'rgba(53, 29, 117, 0.07)');
     gradientB.addColorStop(1, 'rgba(53, 29, 117, 0)');
-    ctx.fillStyle = gradientB;
-    ctx.fillRect(secondarySweep - 120, 0, 260, height);
+    context.fillStyle = gradientB;
+    context.fillRect(secondarySweep - 120, 0, 260, height);
 
-    ctx.strokeStyle = 'rgba(231, 135, 49, 0.07)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(primarySweep, height * 0.08);
-    ctx.lineTo(primarySweep + 30, height * 0.92);
-    ctx.stroke();
+    context.strokeStyle = 'rgba(231, 135, 49, 0.07)';
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(primarySweep, height * 0.08);
+    context.lineTo(primarySweep + 30, height * 0.92);
+    context.stroke();
   }
 
   function updateNodes() {
@@ -170,12 +172,16 @@ export function initHeroGrid() {
   resizeCanvas();
   render();
 
-  window.addEventListener('beforeunload', () => {
-    if (animationId) {
-      window.cancelAnimationFrame(animationId);
-    }
-    resizeObserver.disconnect();
-  }, { once: true });
+  window.addEventListener(
+    'beforeunload',
+    () => {
+      if (animationId) {
+        window.cancelAnimationFrame(animationId);
+      }
+      resizeObserver.disconnect();
+    },
+    { once: true },
+  );
 }
 
 document.addEventListener('DOMContentLoaded', () => {

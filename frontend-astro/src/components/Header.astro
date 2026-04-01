@@ -1,42 +1,22 @@
 ---
+import BrandLogo from './BrandLogo.astro';
+import PrimaryNav from './header/PrimaryNav.astro';
+import SiteSearch from './header/SiteSearch.astro';
+
 const pathname = Astro.url.pathname;
 const currentPath = pathname.replace(/^\/|\/$/g, '');
-
-const isActive = (path: string) => {
-  if (path === '' && currentPath === '') return 'active';
-  if (path !== '' && currentPath.startsWith(path)) return 'active';
-  return '';
-};
 ---
 
 <header id="header" class="site-header">
   <div class="container nav-container">
-      <a href="/" class="logo" style="text-decoration: none; display: flex; align-items: center;">
-          <img src="/logo.png" alt="Cyberfyx Logo" style="height: 40px; width: auto;">
-      </a>
-
-      <nav id="nav-menu" class="nav-menu">
-          <a href="/" class={`nav-link ${isActive('')}`}>Home</a>
-          <a href="/about" class={`nav-link ${isActive('about')}`}>About</a>
-          <div class="nav-item has-dropdown">
-              <a href="/services" class={`nav-link ${isActive('services')}`}>Services <span class="dropdown-chevron" aria-hidden="true" style="font-size: 0.7em; margin-left: 3px; transition: transform 0.2s; display:inline-block;">▾</span></a>
-              <div class="dropdown-menu">
-                  <a href="/services/cybersecurity" class="dropdown-item">Cybersecurity</a>
-                  <a href="/services/it-security" class="dropdown-item">IT Security</a>
-                  <a href="/services/endpoint-management" class="dropdown-item">Endpoint Management</a>
-                  <a href="/services/core-industry" class="dropdown-item">Core Industry</a>
-                  <a href="/services/training" class="dropdown-item">Training</a>
-              </div>
-          </div>
-          <a href="/industries" class={`nav-link ${isActive('industries')}`}>Industries</a>
-          <a href="/careers" class={`nav-link ${isActive('careers')}`}>Careers</a>
-          <a href="/contact" class={`nav-link ${isActive('contact')}`}>Contact</a>
-      </nav>
+      <BrandLogo imageHeight={40} />
+      <PrimaryNav currentPath={currentPath} />
 
       <div class="nav-actions">
+          <SiteSearch />
           <a href="/contact" class="btn btn-quote">Get Quote</a>
           <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle menu">
-              <span class="mobile-menu-icon" aria-hidden="true">☰</span>
+              <i class="fa-solid fa-bars"></i>
           </button>
       </div>
   </div>

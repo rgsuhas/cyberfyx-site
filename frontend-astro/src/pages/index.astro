@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassCard from '../components/GlassCard.astro';
+
+void GlassCard;
 ---
 
 <BaseLayout title="Cyberfyx | Next-Generation Cybersecurity & IT Solutions">
@@ -159,7 +161,7 @@ import GlassCard from '../components/GlassCard.astro';
           </div>
           <i class="fa-solid fa-arrow-right" style="color: var(--text-secondary);"></i>
         </a>
-        
+
         <a href="/services/training/" class="glass-card fade-up delay-100 service-card" style="display: flex; align-items: center; justify-content: space-between; padding: 2rem; border-radius: 50px; text-decoration: none;">
           <div style="display: flex; align-items: center; gap: 1.5rem;">
             <i class="fa-solid fa-chalkboard-user" style="font-size: 2rem; color: var(--logo-text-primary);"></i>
@@ -232,7 +234,7 @@ import GlassCard from '../components/GlassCard.astro';
 
         <div class="glass-card fade-up delay-100">
           <h3 style="margin-bottom: 1.5rem;">Send Us a Message</h3>
-          <form id="contact-form">
+          <form id="contact-form" data-inquiry-form="public">
             <div class="form-group">
               <label for="name" class="form-label">Full Name</label>
               <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
@@ -263,4 +265,3 @@ import GlassCard from '../components/GlassCard.astro';
     </div>
   </section>
 </BaseLayout>
-

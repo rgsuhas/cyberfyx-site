@@ -49,3 +49,11 @@ The frontend now has standard npm scripts you can use throughout development:
 - `npm run astro -- <args>` — run Astro CLI commands.
 
 For a full backend/frontend local workflow (including migrations and seed data), use the commands in **[Getting Started](docs/getting-started.md)**.
+
+## Root `npm start`
+
+You can also start the full local development stack from the repository root with:
+
+`npm start`
+
+This root command installs the backend and frontend dependencies, runs backend migrations, seeds the database, and starts both the FastAPI backend and Astro frontend. If the default ports are already in use, it automatically selects the next available local ports and prints the active URLs.

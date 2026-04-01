@@ -17,7 +17,7 @@ const { interestOptions = [] } = Astro.props;
     <p>We'll get back to you within one business day.</p>
   </div>
 
-  <form id="contact-form" action="#" method="POST" class="contact-form" novalidate>
+  <form id="contact-form" data-inquiry-form="public" action="#" method="POST" class="contact-form" novalidate>
 
     <div class="cf-row">
       <div class="cf-field">
@@ -130,6 +130,10 @@ const { interestOptions = [] } = Astro.props;
     border-color: var(--logo-text-primary);
   }
 
+  .cf-input.field-invalid {
+    border-color: var(--accent-tertiary);
+  }
+
   /* Floating label */
   .cf-label {
     position: absolute;
@@ -149,6 +153,10 @@ const { interestOptions = [] } = Astro.props;
     color: var(--logo-text-accent);
     font-weight: 600;
     letter-spacing: 0.04em;
+  }
+
+  .cf-field.field-has-error .cf-label {
+    color: var(--accent-tertiary);
   }
 
   /* Animated underline bar */
@@ -209,6 +217,13 @@ const { interestOptions = [] } = Astro.props;
     color: var(--logo-text-primary);
   }
 
+  .form-warning {
+    margin-top: 0.55rem;
+    font-size: 0.82rem;
+    color: var(--accent-tertiary);
+    line-height: 1.4;
+  }
+
   /* Status message */
   .cf-status {
     padding: 0.85rem 1.1rem;
@@ -263,4 +278,3 @@ const { interestOptions = [] } = Astro.props;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 </style>
-
