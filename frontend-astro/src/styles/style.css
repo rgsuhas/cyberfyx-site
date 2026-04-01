@@ -33,7 +33,7 @@
   --shadow-glow: 0 4px 15px rgba(var(--accent-primary-rgb), 0.25);
   --shadow-hover: 0 10px 30px rgba(231, 135, 49, 0.15);
 
-  --font-main: 'Inter', sans-serif;
+  --font-main: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
@@ -1056,6 +1056,6 @@ textarea.form-control {
 }
 
 /* Chevron rotation when dropdown is open */
-.has-dropdown:hover .fa-chevron-down {
+.has-dropdown:hover .dropdown-chevron {
   transform: rotate(180deg);
 }

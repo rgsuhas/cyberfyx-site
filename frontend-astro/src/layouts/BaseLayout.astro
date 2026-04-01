@@ -10,8 +10,8 @@ interface Props {
   description?: string;
 }
 
-const { 
-  title, 
+const {
+  title,
   description = "Cyberfyx is a next-generation IT and cybersecurity solutions provider focused on empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience."
 } = Astro.props;
 ---
@@ -23,14 +23,14 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <link rel="icon" type="image/png" href="/favicon.png" />
-    
+
     <meta name="cyberfyx-api-base" content={import.meta.env.PUBLIC_API_BASE ?? ''}>
 
     <ViewTransitions />
@@ -44,7 +44,7 @@ const {
   </head>
   <body>
     <Header />
-    
+
     <main id="main">
       <slot />
     </main>

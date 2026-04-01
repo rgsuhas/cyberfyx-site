@@ -8,7 +8,6 @@ from app.core.config import get_settings
 from app.core.errors import AppError
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-settings = get_settings()
 
 
 def hash_password(password: str) -> str:
@@ -21,6 +20,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 def create_access_token(subject: str, role: str, expires_delta: timedelta | None = None) -> str:
     now = datetime.now(timezone.utc)
+    settings = get_settings()
     expiration = now + (expires_delta or timedelta(minutes=settings.jwt_access_token_expire_minutes))
     payload: dict[str, Any] = {
         "sub": subject,
@@ -33,6 +33,7 @@ def create_access_token(subject: str, role: str, expires_delta: timedelta | None
 
 
 def decode_access_token(token: str) -> dict[str, Any]:
+    settings = get_settings()
     try:
         payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
     except jwt.ExpiredSignatureError as exc:

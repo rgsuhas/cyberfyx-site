@@ -42,7 +42,7 @@ const { interestOptions = [] } = Astro.props;
       </select>
       <label for="subject" class="cf-label">Service Interested In</label>
       <span class="cf-bar"></span>
-      <i class="fa-solid fa-chevron-down cf-select-icon"></i>
+      <span class="cf-select-icon" aria-hidden="true">▾</span>
     </div>
 
     <div class="cf-field">
@@ -55,7 +55,7 @@ const { interestOptions = [] } = Astro.props;
 
     <button type="submit" id="submit-btn" class="cf-submit">
       <span class="cf-submit-text">Send Message</span>
-      <i class="fa-solid fa-arrow-right cf-submit-icon"></i>
+      <span class="cf-submit-icon" aria-hidden="true">→</span>
     </button>
 
   </form>
