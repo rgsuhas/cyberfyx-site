@@ -1,8 +1,8 @@
+const MOBILE_BREAKPOINT = window.matchMedia('(max-width: 768px)');
+
 export function initHeroGrid() {
-  // Initialize home page hero grid
+  if (MOBILE_BREAKPOINT.matches) return;
   initGridCanvas('hero-grid-canvas');
-  
-  // Initialize about page hero grid
   initGridCanvas('page-hero-grid-canvas');
 }
 
