@@ -2,6 +2,7 @@ const activeAnimations = new WeakMap<HTMLElement, number>();
 let counterObserver: IntersectionObserver | null = null;
 
 const STORAGE_KEY = 'cyberfyx_counters_animated';
+let isPageReload = false;
 
 export function initCounters() {
   const counters = Array.from(document.querySelectorAll<HTMLElement>('.counter'));
@@ -12,6 +13,12 @@ export function initCounters() {
   }
 
   if (!counters.length) return;
+
+  // If this is a page reload, reset the animation flag so counters animate again
+  if (isPageReload) {
+    sessionStorage.removeItem(STORAGE_KEY);
+    isPageReload = false;
+  }
 
   const hasAnimatedBefore = sessionStorage.getItem(STORAGE_KEY) === 'true';
   counters.forEach(counter => prepareCounter(counter, hasAnimatedBefore));
@@ -109,6 +116,16 @@ function animateCounter(element: HTMLElement, target: number) {
   activeAnimations.set(element, frameId);
 }
 
-document.addEventListener('DOMContentLoaded', initCounters);
+// Mark as page reload on DOMContentLoaded (full page load or hard refresh)
+document.addEventListener('DOMContentLoaded', () => {
+  isPageReload = true;
+  initCounters();
+});
+
+// On astro navigation (soft page load), only initialize counters
 document.addEventListener('astro:page-load', initCounters);
-window.addEventListener('pageshow', initCounters);
+
+window.addEventListener('pageshow', () => {
+  isPageReload = true;
+  initCounters();
+});
