@@ -19,7 +19,7 @@ ENV/
 .ruff_cache/
 dist/
 build/
-*.egg-info/
+*.egg-info/*
 
 # --- Node/JavaScript (Astro) ---
 node_modules/

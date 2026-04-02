@@ -1,6 +1,6 @@
 from datetime import datetime
-
-from pydantic import AliasChoices, EmailStr, Field, field_validator
+from typing import Any
+from pydantic import EmailStr, Field, field_validator, model_validator
 
 from app.models.enums import InquiryStatus, StaffRole
 from app.schemas.common import APIModel, PageMeta
@@ -20,14 +20,12 @@ class InquiryCreate(APIModel):
     name: str = Field(
         min_length=2,
         max_length=120,
-        validation_alias=AliasChoices("name", "full_name"),
     )
     email: EmailStr
     company: str | None = Field(default=None, max_length=160)
     interest_slug: str = Field(
         min_length=2,
         max_length=80,
-        validation_alias=AliasChoices("interest_slug", "subject", "interest", "service"),
     )
     message: str | None = Field(default=None, max_length=5000)
     source_page: str | None = Field(default=None, max_length=160)
@@ -39,6 +37,19 @@ class InquiryCreate(APIModel):
     utm_campaign: str | None = Field(default=None, max_length=120)
     utm_content: str | None = Field(default=None, max_length=120)
     utm_term: str | None = Field(default=None, max_length=120)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _map_aliases(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "name" not in data and "full_name" in data:
+                data["name"] = data["full_name"]
+            
+            for alias in ["subject", "interest", "service"]:
+                if "interest_slug" not in data and alias in data:
+                    data["interest_slug"] = data[alias]
+                    break
+        return data
 
     @field_validator("name", "company", "message", "source_page", "solution_track_slug", "cta_label", mode="before")
     @classmethod

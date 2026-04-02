@@ -20,6 +20,7 @@ def test_public_inquiry_accepts_valid_payload(client, db_session, seeded_db):
 
     response = client.post("/api/v1/public/inquiries", json=payload)
 
+    print(response.json())
     assert response.status_code == 201
     body = response.json()
     assert body["status"] == "new"
@@ -77,6 +78,7 @@ def test_public_inquiry_accepts_frontend_subject_alias_and_form_encoding(client,
         },
     )
 
+    print(response.json())
     assert response.status_code == 201
     body = response.json()
     saved = db_session.scalar(select(Inquiry).where(Inquiry.id == body["id"]))

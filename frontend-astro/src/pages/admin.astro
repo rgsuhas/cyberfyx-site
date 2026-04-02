@@ -292,13 +292,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="detail-label">Status</div>
         <div><span class="status-badge ${statusBadgeClass(inq.status)}">${inq.status}</span></div>
         <div class="detail-label">Source page</div>
-        <div style="font-size:0.85rem;">${escHtml(inq.source_page ?? '—')}</div>
+        <div style="font-size:0.85rem;">${escHtml(inq.source_page ?? '-')}</div>
         <div class="detail-label">Track</div>
-        <div style="font-size:0.85rem;">${escHtml(inq.solution_track_slug ?? '—')}</div>
+        <div style="font-size:0.85rem;">${escHtml(inq.solution_track_slug ?? '-')}</div>
         <div class="detail-label">CTA</div>
-        <div style="font-size:0.85rem;">${escHtml(inq.cta_label ?? '—')}</div>
+        <div style="font-size:0.85rem;">${escHtml(inq.cta_label ?? '-')}</div>
         <div class="detail-label">Referrer</div>
-        <div style="font-size:0.85rem; word-break:break-all;">${escHtml(inq.referrer_url ?? '—')}</div>
+        <div style="font-size:0.85rem; word-break:break-all;">${escHtml(inq.referrer_url ?? '-')}</div>
         ${utmParts ? `<div class="detail-label">UTM</div><div style="display:flex;flex-wrap:wrap;gap:0.3rem;">${utmParts}</div>` : ''}
         <div class="detail-label">Received</div>
         <div style="font-size:0.85rem;">${new Date(inq.created_at).toLocaleString()}</div>

@@ -49,8 +49,8 @@ async def _parse_inquiry_payload(request: Request) -> InquiryCreate:
     )
 
 
-@router.post("/", response_model=InquiryCreateResponse, status_code=status.HTTP_201_CREATED)
-async def submit_inquiry( payload: InquiryCreate, request: Request, session: DBSession ) -> InquiryCreateResponse:
+@router.post("", response_model=InquiryCreateResponse, status_code=status.HTTP_201_CREATED)
+async def submit_inquiry( request: Request, session: DBSession, payload: InquiryCreate = Depends(_parse_inquiry_payload) ) -> InquiryCreateResponse:
     inquiry = create_inquiry(
         session,
         payload=payload,

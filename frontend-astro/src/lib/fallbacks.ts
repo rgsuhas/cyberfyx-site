@@ -1,5 +1,5 @@
 /**
- * Static fallback data — mirrors current hardcoded page content.
+ * Static fallback data - mirrors current hardcoded page content.
  * Used when the backend is unavailable during `astro build`.
  */
 
