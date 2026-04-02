@@ -1,8 +1,8 @@
+const NARROW_BREAKPOINT = window.matchMedia('(max-width: 992px)');
+
 export function initHeroGrid() {
-  // Initialize home page hero grid
+  if (NARROW_BREAKPOINT.matches) return;
   initGridCanvas('hero-grid-canvas');
-  
-  // Initialize about page hero grid
   initGridCanvas('page-hero-grid-canvas');
 }
 

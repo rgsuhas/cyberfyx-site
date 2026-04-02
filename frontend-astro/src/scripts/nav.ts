@@ -106,9 +106,13 @@ function initNav() {
     }
   });
 
+  let resizeTimer = 0;
   window.addEventListener('resize', () => {
-    header.classList.remove('hidden');
-    closeMobileMenu();
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      header.classList.remove('hidden');
+      closeMobileMenu();
+    }, 100);
   });
 
   window.addEventListener('pageshow', () => {
