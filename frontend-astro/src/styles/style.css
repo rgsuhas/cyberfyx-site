@@ -1134,18 +1134,6 @@ textarea.form-control {
     display: none;
   }
 
-  /* Skip fade-up transitions on mobile — show content immediately */
-  .fade-up {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  .delay-100,
-  .delay-200,
-  .delay-300 {
-    transition-delay: 0s;
-  }
 
   .approach-shell {
     padding: 1.5rem 1.15rem;

@@ -3,9 +3,8 @@ export {};
 function initAnimations() {
   const faders = document.querySelectorAll('.fade-up:not(.visible)');
 
-  // On mobile skip the observer — show everything immediately to avoid
-  // elements getting stuck invisible during fast scrolling.
-  if (window.matchMedia('(max-width: 768px)').matches || !('IntersectionObserver' in window)) {
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: make everything visible immediately
     faders.forEach(el => el.classList.add('visible'));
     return;
   }
