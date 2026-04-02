@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("headquarters_name", sa.String(length=160), nullable=False),
         sa.Column("headquarters_address", sa.Text(), nullable=False),
         sa.Column("map_url", sa.String(length=500), nullable=False),
-        sa.Column("published", sa.Boolean(), nullable=False, server_default=sa.text("1")),
+        sa.Column("published", sa.Boolean(), nullable=False, server_default=sa.text("true")),
         sa.UniqueConstraint("profile_key", name=op.f("uq_contact_profiles_profile_key")),
     )
 
@@ -62,7 +62,7 @@ def upgrade() -> None:
         sa.Column("display_name", sa.String(length=160), nullable=False),
         sa.Column("password_hash", sa.String(length=255), nullable=False),
         sa.Column("role", sa.Enum("super_admin", "sales_admin", "content_admin", "recruiter", "viewer", name="staff_role", native_enum=False, create_constraint=True), nullable=False),
-        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("1")),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("true")),
         sa.Column("last_login_at", sa.DateTime(timezone=True), nullable=True),
         sa.UniqueConstraint("email", name=op.f("uq_staff_users_email")),
     )
@@ -101,7 +101,7 @@ def upgrade() -> None:
         sa.Column("slug", sa.String(length=80), nullable=False),
         sa.Column("label", sa.String(length=160), nullable=False),
         sa.Column("route_target", sa.String(length=80), nullable=False, server_default=sa.text("'sales'")),
-        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("1")),
+        sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("true")),
         sa.Column("display_order", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(["contact_profile_id"], ["contact_profiles.id"], ondelete="CASCADE", name=op.f("fk_contact_interest_options_contact_profile_id_contact_profiles")),
         sa.UniqueConstraint("contact_profile_id", "slug", name=op.f("uq_contact_interest_options_profile_slug")),
