@@ -1,5 +1,5 @@
 /**
- * Build-time API utilities — runs during `astro build` in component frontmatter.
+ * Build-time API utilities - runs during `astro build` in component frontmatter.
  * Falls back to null on any error; callers use fallback data.
  */
 
