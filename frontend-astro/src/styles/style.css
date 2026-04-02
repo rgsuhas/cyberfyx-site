@@ -867,14 +867,30 @@ section {
 
 .industry-card i {
   font-size: 3rem;
-  color: var(--accent-primary);
+  color: var(--logo-text-primary);
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
 .industry-card:hover i {
   transform: scale(1.1) translateY(-10px);
-  color: var(--accent-secondary);
+  color: var(--logo-text-secondary);
+}
+
+.industries-grid .industry-card:nth-child(4n + 1) {
+  background: var(--bg-glass);
+}
+
+.industries-grid .industry-card:nth-child(4n + 2) {
+  background: var(--bg-glass-alt);
+}
+
+.industries-grid .industry-card:nth-child(4n + 3) {
+  background: var(--bg-glass-accent);
+}
+
+.industries-grid .industry-card:nth-child(4n + 4) {
+  background: color-mix(in srgb, var(--bg-glass) 70%, var(--bg-glass-accent) 30%);
 }
 
 /* Form Styles */
