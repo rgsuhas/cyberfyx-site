@@ -249,26 +249,19 @@ section {
   overflow: visible;
 }
 
-.hero::before {
+[data-theme="dark"] .hero::before {
   content: '';
   position: absolute;
   top: -80px;
   left: 0;
   right: 0;
   height: calc(100vh + 80px);
-  background: linear-gradient(135deg, rgba(53, 29, 117, 0.12) 0%, rgba(10, 31, 61, 0.08) 48%, rgba(231, 135, 49, 0.07) 100%),
-    radial-gradient(circle at 70% 30%, rgba(var(--accent-primary-rgb), 0.11) 0%, transparent 54%),
-    radial-gradient(circle at 30% 70%, rgba(var(--accent-secondary-rgb), 0.10) 0%, transparent 56%);
-  mix-blend-mode: overlay;
-  z-index: -1;
-  pointer-events: none;
-}
-
-[data-theme="dark"] .hero::before {
   background: linear-gradient(135deg, rgba(53, 29, 117, 0.18) 0%, rgba(10, 31, 61, 0.12) 50%, rgba(231, 135, 49, 0.14) 100%),
     radial-gradient(circle at 70% 30%, rgba(var(--accent-primary-rgb), 0.12) 0%, transparent 50%),
     radial-gradient(circle at 30% 70%, rgba(var(--accent-secondary-rgb), 0.12) 0%, transparent 50%);
   mix-blend-mode: multiply;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .hero-content {
