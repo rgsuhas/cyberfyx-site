@@ -1,7 +1,7 @@
-const MOBILE_BREAKPOINT = window.matchMedia('(max-width: 768px)');
+const NARROW_BREAKPOINT = window.matchMedia('(max-width: 992px)');
 
 export function initHeroGrid() {
-  if (MOBILE_BREAKPOINT.matches) return;
+  if (NARROW_BREAKPOINT.matches) return;
   initGridCanvas('hero-grid-canvas');
   initGridCanvas('page-hero-grid-canvas');
 }
