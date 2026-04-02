@@ -279,7 +279,7 @@ section {
 }
 
 .contact-split {
-  align-items: start;
+  align-items: end;
 }
 
 .hero-layout {
@@ -941,6 +941,10 @@ textarea.form-control {
   border: 1px solid var(--border-glass);
   border-radius: 1rem;
   transition: all var(--transition-normal);
+}
+
+.contact-info-item:last-child {
+  margin-bottom: 0;
 }
 
 .contact-info-item:hover {
