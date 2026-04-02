@@ -1,5 +1,13 @@
 export function initHeroGrid() {
-  const canvasElement = document.getElementById('hero-grid-canvas') as HTMLCanvasElement | null;
+  // Initialize home page hero grid
+  initGridCanvas('hero-grid-canvas');
+  
+  // Initialize about page hero grid
+  initGridCanvas('page-hero-grid-canvas');
+}
+
+function initGridCanvas(canvasId: string) {
+  const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement | null;
   if (!canvasElement) return;
   const canvas: HTMLCanvasElement = canvasElement;
 
@@ -47,13 +55,14 @@ export function initHeroGrid() {
     context.clearRect(0, 0, width, height);
 
     const bg = context.createLinearGradient(0, 0, width, height);
-    bg.addColorStop(0, 'rgba(255,255,255,0.008)');
-    bg.addColorStop(1, 'rgba(53,29,117,0.012)');
+    bg.addColorStop(0, 'rgba(255,255,255,0)');
+    bg.addColorStop(0.5, 'rgba(53,29,117,0.005)');
+    bg.addColorStop(1, 'rgba(53,29,117,0.008)');
     context.fillStyle = bg;
     context.fillRect(0, 0, width, height);
 
-    context.strokeStyle = 'rgba(90,74,147,0.055)';
-    context.lineWidth = 1;
+    context.strokeStyle = 'rgba(90,74,147,0.03)';
+    context.lineWidth = 0.8;
 
     const gap = 28;
     for (let x = 0; x <= width; x += gap) {
@@ -118,29 +127,7 @@ export function initHeroGrid() {
   }
 
   function drawSweep() {
-    const primarySweep = (sweepOffset % (width * 1.4)) - width * 0.4;
-    const secondarySweep = ((sweepOffset + width * 0.55) % (width * 1.6)) - width * 0.6;
-
-    const gradientA = context.createLinearGradient(primarySweep - 80, 0, primarySweep + 120, 0);
-    gradientA.addColorStop(0, 'rgba(231, 135, 49, 0)');
-    gradientA.addColorStop(0.5, 'rgba(231, 135, 49, 0.08)');
-    gradientA.addColorStop(1, 'rgba(231, 135, 49, 0)');
-    context.fillStyle = gradientA;
-    context.fillRect(primarySweep - 80, 0, 200, height);
-
-    const gradientB = context.createLinearGradient(secondarySweep - 120, 0, secondarySweep + 140, 0);
-    gradientB.addColorStop(0, 'rgba(53, 29, 117, 0)');
-    gradientB.addColorStop(0.5, 'rgba(53, 29, 117, 0.07)');
-    gradientB.addColorStop(1, 'rgba(53, 29, 117, 0)');
-    context.fillStyle = gradientB;
-    context.fillRect(secondarySweep - 120, 0, 260, height);
-
-    context.strokeStyle = 'rgba(231, 135, 49, 0.07)';
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(primarySweep, height * 0.08);
-    context.lineTo(primarySweep + 30, height * 0.92);
-    context.stroke();
+    // Sweeps removed for cleaner blending
   }
 
   function updateNodes() {
