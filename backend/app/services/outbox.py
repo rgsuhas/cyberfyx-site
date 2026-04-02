@@ -9,7 +9,6 @@ from app.models.enums import OutboxStatus
 from app.models.outbox import OutboxEvent
 
 OutboxHandler = Callable[[Session, OutboxEvent], Any]
-MAX_ATTEMPTS = 5
 
 
 def enqueue_outbox_event(session: Session, *, topic: str, payload: dict[str, Any]) -> OutboxEvent:
@@ -31,7 +30,6 @@ def process_pending_outbox_events(
             .where(
                 OutboxEvent.status.in_([OutboxStatus.pending, OutboxStatus.failed]),
                 OutboxEvent.available_at <= now,
-                OutboxEvent.attempts < MAX_ATTEMPTS,
             )
             .order_by(OutboxEvent.available_at.asc(), OutboxEvent.created_at.asc())
             .limit(batch_size)
@@ -56,27 +54,6 @@ def process_pending_outbox_events(
             event.status = OutboxStatus.failed
             event.last_error = str(exc)
             session.add(event)
-
-            if event.attempts >= MAX_ATTEMPTS:
-                event.last_error = f"{event.last_error} (max attempts reached: {MAX_ATTEMPTS})"
-
-    exhausted_events = list(
-        session.scalars(
-            select(OutboxEvent)
-            .where(
-                OutboxEvent.status.in_([OutboxStatus.pending, OutboxStatus.failed]),
-                OutboxEvent.available_at <= now,
-                OutboxEvent.attempts >= MAX_ATTEMPTS,
-            )
-            .limit(batch_size)
-        ).all()
-    )
-    for event in exhausted_events:
-        if event.status != OutboxStatus.failed:
-            event.status = OutboxStatus.failed
-        if not event.last_error:
-            event.last_error = f"Event moved to terminal failure after reaching max attempts ({MAX_ATTEMPTS})."
-        session.add(event)
 
     session.commit()
     return events

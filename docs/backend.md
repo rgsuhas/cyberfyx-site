@@ -56,13 +56,6 @@ python -m app.db.seed
 Email notifications are handled using the **Outbox Pattern** to ensure reliability. The worker process monitors the database for pending events:
 ```bash
 python -m app.worker
-# or run continuously every 5 minutes
-python -m app.worker --loop --interval-seconds 300
-```
-
-If you prefer one-shot execution, run it from cron:
-```bash
-*/5 * * * * cd /path/to/repo/backend && /path/to/venv/bin/python -m app.worker
 ```
 
 ## Configuration

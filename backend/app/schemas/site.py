@@ -1,4 +1,4 @@
-from pydantic import EmailStr
+from pydantic import EmailStr, Field
 
 from app.schemas.common import APIModel
 
@@ -31,5 +31,8 @@ class ContactProfileRead(APIModel):
 class SiteSearchEntryRead(APIModel):
     href: str
     title: str
+    kind: str
     section: str
     text: str
+    excerpt: str | None = None
+    keywords: list[str] = Field(default_factory=list)

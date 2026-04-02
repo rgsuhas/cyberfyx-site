@@ -46,8 +46,8 @@ GET  /health/live                          — liveness
 GET  /health/ready                         — readiness (checks DB)
 
 GET  /api/v1/public/site/contact-profile   — contact info + interest options
-GET  /api/v1/public/solution-tracks         — solution tracks
-GET  /api/v1/public/solution-tracks/{slug}  — single track detail
+GET  /api/v1/public/catalog/tracks         — solution tracks
+GET  /api/v1/public/catalog/tracks/{slug}  — single track detail
 POST /api/v1/public/inquiries              — submit contact inquiry
 
 # Only when CYBERFYX_ENABLE_INTERNAL_API=true

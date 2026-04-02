@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
+import cloudflare from "@astrojs/cloudflare";
+
 const runtime = /** @type {any} */ (globalThis);
 const apiProxyTarget = runtime.process?.env?.API_PROXY_TARGET ?? 'http://127.0.0.1:8000';
 
@@ -16,4 +18,7 @@ export default defineConfig({
       },
     },
   },
+
+  output: "hybrid",
+  adapter: cloudflare()
 });

@@ -1,57 +1,101 @@
-// Counter Animation Script for Stats Section
-export function initCounters() {
-  const counters = document.querySelectorAll<HTMLElement>('.counter');
-  
-  const observerOptions = {
-    threshold: 0.5,
-    rootMargin: '0px'
-  };
+const activeAnimations = new WeakMap<HTMLElement, number>();
+let counterObserver: IntersectionObserver | null = null;
 
-  const observer = new IntersectionObserver((entries) => {
+export function initCounters() {
+  const counters = Array.from(document.querySelectorAll<HTMLElement>('.counter'));
+
+  if (counterObserver) {
+    counterObserver.disconnect();
+    counterObserver = null;
+  }
+
+  if (!counters.length) return;
+
+  counters.forEach(counter => prepareCounter(counter));
+
+  if (!('IntersectionObserver' in window)) {
+    counters.forEach(counter => animateWhenNeeded(counter));
+    return;
+  }
+
+  counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const counter = entry.target as HTMLElement;
-        const target = parseInt(counter.getAttribute('data-target') || '0', 10);
-        
-        // Only animate if not already animated
-        if (counter.getAttribute('data-animated') !== 'true') {
-          animateCounter(counter, target);
-          counter.setAttribute('data-animated', 'true');
-        }
+      if (!entry.isIntersecting) return;
+
+      const counter = entry.target as HTMLElement;
+      animateWhenNeeded(counter);
+
+      if (counter.getAttribute('data-animated') === 'true') {
+        counterObserver?.unobserve(counter);
       }
     });
-  }, observerOptions);
+  }, {
+    threshold: 0.45,
+    rootMargin: '0px 0px -24px 0px',
+  });
 
-  counters.forEach(counter => observer.observe(counter));
+  counters.forEach(counter => counterObserver?.observe(counter));
+}
+
+function prepareCounter(counter: HTMLElement) {
+  const target = parseInt(counter.getAttribute('data-target') || '0', 10);
+  const renderedValue = parseInt(counter.textContent || '0', 10);
+  const isAlreadyComplete = counter.getAttribute('data-animated') === 'true' && renderedValue === target;
+
+  if (isAlreadyComplete) {
+    counter.textContent = target.toString();
+    return;
+  }
+
+  stopCounterAnimation(counter);
+  counter.textContent = '0';
+  counter.setAttribute('data-animated', 'false');
+}
+
+function animateWhenNeeded(counter: HTMLElement) {
+  if (counter.getAttribute('data-animated') === 'true') return;
+
+  const target = parseInt(counter.getAttribute('data-target') || '0', 10);
+  animateCounter(counter, target);
+  counter.setAttribute('data-animated', 'true');
+}
+
+function stopCounterAnimation(counter: HTMLElement) {
+  const frameId = activeAnimations.get(counter);
+  if (typeof frameId === 'number') {
+    window.cancelAnimationFrame(frameId);
+    activeAnimations.delete(counter);
+  }
 }
 
 function animateCounter(element: HTMLElement, target: number) {
-  const duration = 2000; // 2 seconds
-  const start = 0;
+  stopCounterAnimation(element);
+
+  const duration = 2000;
   const startTime = performance.now();
 
   const animate = (currentTime: number) => {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    
-    // Easing function - ease-out effect
     const easeProgress = 1 - Math.pow(1 - progress, 3);
-    
-    const current = Math.floor(start + (target - start) * easeProgress);
-    
+    const current = Math.floor(target * easeProgress);
+
     element.textContent = current.toString();
 
     if (progress < 1) {
-      requestAnimationFrame(animate);
+      const frameId = window.requestAnimationFrame(animate);
+      activeAnimations.set(element, frameId);
+      return;
     }
+
+    element.textContent = target.toString();
+    activeAnimations.delete(element);
   };
 
-  requestAnimationFrame(animate);
+  const frameId = window.requestAnimationFrame(animate);
+  activeAnimations.set(element, frameId);
 }
 
-// Initialize when script loads
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initCounters);
-} else {
-  initCounters();
-}
+document.addEventListener('DOMContentLoaded', initCounters);
+document.addEventListener('astro:page-load', initCounters);
+window.addEventListener('pageshow', initCounters);

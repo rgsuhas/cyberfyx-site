@@ -1,27 +1,58 @@
 import { searchIndex as staticIndex, type SearchEntry } from '../data/search-index';
 
+const POPULAR_SEARCHES = [
+  'ISO 27001',
+  'VAPT',
+  'SOC 2',
+  'Endpoint',
+  'Training',
+  'Get Quote',
+];
+
+interface SearchTerm {
+  label: string;
+  normalized: string;
+  compact: string;
+  weight: number;
+}
+
 interface SearchIndexEntry {
+  excerpt: string;
   href: string;
-  title: string;
+  kind: string;
+  keywords: string[];
   section: string;
-  searchText: string;
+  text: string;
+  title: string;
+  excerptText: string;
+  fullText: string;
+  searchTerms: SearchTerm[];
+  titleText: string;
+}
+
+interface SearchMatch {
+  entry: SearchIndexEntry;
+  matchedTerms: string[];
+  score: number;
 }
 
 type BackendSearchEntry = {
+  excerpt?: string;
   href?: string;
+  kind?: string;
+  keywords?: string[];
   section?: string;
   text?: string;
   title?: string;
   url?: string;
-  excerpt?: string;
-  keywords?: string[];
 };
 
 let resolvedIndex: SearchIndexEntry[] = normalizeStaticEntries(staticIndex);
 
 async function initSearchIndex(apiBaseUrl: string) {
   try {
-    const res = await fetch(`${apiBaseUrl}/api/v1/public/site/search-index`);
+    const resolvedApiBaseUrl = resolveClientApiBaseUrl(apiBaseUrl);
+    const res = await fetch(`${resolvedApiBaseUrl}/api/v1/public/site/search-index`);
     if (!res.ok) return;
 
     const data = await res.json();
@@ -55,36 +86,35 @@ function initSiteSearch() {
 
   if (!inputNode || !resultsNode || !closeButtonNode) return;
 
-  const searchWrapper: HTMLDivElement = searchWrapperNode;
-  const input: HTMLInputElement = inputNode;
-  const results: HTMLDivElement = resultsNode;
-  const closeButton: HTMLButtonElement = closeButtonNode;
+  const searchWrapper = searchWrapperNode;
+  const input = inputNode;
+  const results = resultsNode;
+  const closeButton = closeButtonNode;
+  let lastResults: SearchMatch[] = [];
 
   searchWrapper.dataset.searchInit = '1';
 
   function renderResults(query = '') {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = normalizeText(query);
     if (!normalizedQuery) {
-      results.innerHTML = '<div class="site-search-empty">Start typing to search the website.</div>';
+      lastResults = [];
+      results.innerHTML = renderEmptyState();
       return;
     }
 
     const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
-    const matches = resolvedIndex
-      .filter(entry => queryTokens.every(token => entry.searchText.includes(token)))
-      .slice(0, 10);
+    lastResults = resolvedIndex
+      .map(entry => scoreSearchEntry(entry, queryTokens, normalizedQuery))
+      .filter((match): match is SearchMatch => match !== null)
+      .sort((left, right) => right.score - left.score || left.entry.title.localeCompare(right.entry.title))
+      .slice(0, 8);
 
-    if (!matches.length) {
-      results.innerHTML = '<div class="site-search-empty">No matching pages found. Try contact, services, industries, or careers.</div>';
+    if (!lastResults.length) {
+      results.innerHTML = renderNoResultsState();
       return;
     }
 
-    results.innerHTML = matches.map(entry => `
-      <a class="site-search-result" href="${entry.href}">
-        <strong>${entry.title}</strong>
-        <small>${entry.section}</small>
-      </a>
-    `).join('');
+    results.innerHTML = lastResults.map(match => renderSearchResult(match)).join('');
   }
 
   function openSearch() {
@@ -95,8 +125,15 @@ function initSiteSearch() {
   function closeSearch({ clear = false } = {}) {
     if (clear) {
       input.value = '';
+      lastResults = [];
     }
     searchWrapper.classList.remove('open');
+  }
+
+  function runChipSearch(query: string) {
+    input.value = query;
+    openSearch();
+    input.focus();
   }
 
   input.addEventListener('focus', () => {
@@ -119,7 +156,15 @@ function initSiteSearch() {
   });
 
   results.addEventListener('click', event => {
-    const resultLink = (event.target as HTMLElement).closest('.site-search-result');
+    const target = event.target as HTMLElement;
+    const chip = target.closest('[data-search-chip]') as HTMLElement | null;
+    if (chip) {
+      event.preventDefault();
+      runChipSearch(chip.dataset.searchChip ?? '');
+      return;
+    }
+
+    const resultLink = target.closest('.site-search-result');
     if (resultLink) {
       closeSearch();
     }
@@ -136,9 +181,194 @@ function initSiteSearch() {
       closeSearch();
       input.blur();
     }
+
+    if (event.key === 'Enter' && document.activeElement === input && searchWrapper.classList.contains('open') && lastResults[0]) {
+      event.preventDefault();
+      window.location.href = lastResults[0].entry.href;
+    }
   });
 
   renderResults();
+}
+
+function renderEmptyState() {
+  return `
+    <div class="site-search-empty">
+      <strong>Popular searches</strong>
+      <p>Search by framework, service, or action.</p>
+      <div class="site-search-chip-list">
+        ${POPULAR_SEARCHES.map(chip => renderSearchChip(chip)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderNoResultsState() {
+  return `
+    <div class="site-search-empty">
+      <strong>No direct match</strong>
+      <p>Try a framework, service, or action instead.</p>
+      <div class="site-search-chip-list">
+        ${POPULAR_SEARCHES.slice(0, 4).map(chip => renderSearchChip(chip)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderSearchChip(label: string) {
+  return `<button class="site-search-chip" type="button" data-search-chip="${escapeHtml(label)}">${escapeHtml(label)}</button>`;
+}
+
+function renderSearchResult(match: SearchMatch) {
+  const { entry, matchedTerms } = match;
+  const tags = matchedTerms.length
+    ? `<div class="site-search-result-tags">${matchedTerms.map(term => `<span class="site-search-result-tag">${escapeHtml(term)}</span>`).join('')}</div>`
+    : '';
+
+  return `
+    <a class="site-search-result" href="${escapeHtml(entry.href)}">
+      <div class="site-search-result-header">
+        <strong>${escapeHtml(entry.title)}</strong>
+        <span class="site-search-kind">${escapeHtml(entry.kind)}</span>
+      </div>
+      <small class="site-search-result-copy">${escapeHtml(entry.excerpt || entry.section)}</small>
+      ${tags}
+    </a>
+  `;
+}
+
+function scoreSearchEntry(entry: SearchIndexEntry, queryTokens: string[], normalizedQuery: string): SearchMatch | null {
+  let totalScore = 0;
+  const matchedTerms: string[] = [];
+
+  for (const token of queryTokens) {
+    const tokenMatch = scoreSearchToken(entry, token);
+    if (!tokenMatch) {
+      return null;
+    }
+
+    totalScore += tokenMatch.score;
+    for (const label of tokenMatch.labels) {
+      if (!matchedTerms.includes(label)) {
+        matchedTerms.push(label);
+      }
+    }
+  }
+
+  totalScore += phraseBonus(entry, normalizedQuery);
+
+  return {
+    entry,
+    matchedTerms: matchedTerms.slice(0, 3),
+    score: totalScore,
+  };
+}
+
+function scoreSearchToken(entry: SearchIndexEntry, token: string) {
+  let bestScore = 0;
+  const labels: string[] = [];
+
+  for (const term of entry.searchTerms) {
+    const termScore = scoreTerm(term, token);
+    if (termScore > bestScore) {
+      bestScore = termScore;
+      labels.length = 0;
+      labels.push(term.label);
+    } else if (termScore === bestScore && termScore > 0 && !labels.includes(term.label)) {
+      labels.push(term.label);
+    }
+  }
+
+  if (bestScore === 0 && entry.fullText.includes(token)) {
+    bestScore = 8;
+  }
+
+  if (bestScore === 0) {
+    return null;
+  }
+
+  return {
+    labels,
+    score: bestScore,
+  };
+}
+
+function scoreTerm(term: SearchTerm, token: string) {
+  const compactToken = compactText(token);
+
+  if (term.normalized === token || term.compact === compactToken) {
+    return term.weight + 30;
+  }
+
+  if (hasWordMatch(term.normalized, token)) {
+    return term.weight + 16;
+  }
+
+  if (term.normalized.startsWith(token) || term.compact.startsWith(compactToken)) {
+    return term.weight + 12;
+  }
+
+  if (term.normalized.includes(token) || term.compact.includes(compactToken)) {
+    return term.weight + 6;
+  }
+
+  return 0;
+}
+
+function phraseBonus(entry: SearchIndexEntry, normalizedQuery: string) {
+  let score = 0;
+
+  for (const term of entry.searchTerms) {
+    if (term.normalized === normalizedQuery || term.compact === compactText(normalizedQuery)) {
+      score = Math.max(score, 36);
+    } else if (term.normalized.startsWith(normalizedQuery)) {
+      score = Math.max(score, 24);
+    } else if (term.normalized.includes(normalizedQuery)) {
+      score = Math.max(score, 14);
+    }
+  }
+
+  if (entry.titleText.startsWith(normalizedQuery)) {
+    score = Math.max(score, 20);
+  }
+
+  return score;
+}
+
+function hasWordMatch(value: string, token: string) {
+  if (!value || !token) return false;
+  return value.split(' ').includes(token);
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function resolveClientApiBaseUrl(apiBaseUrl: string) {
+  if (!apiBaseUrl || typeof window === 'undefined') {
+    return apiBaseUrl;
+  }
+
+  const isLocalApp = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+  if (!isLocalApp) {
+    return apiBaseUrl;
+  }
+
+  try {
+    const target = new URL(apiBaseUrl);
+    if (['127.0.0.1', 'localhost'].includes(target.hostname)) {
+      return '';
+    }
+  } catch {
+    return apiBaseUrl;
+  }
+
+  return apiBaseUrl;
 }
 
 function normalizeText(...parts: Array<string | undefined>) {
@@ -148,6 +378,10 @@ function normalizeText(...parts: Array<string | undefined>) {
     .replace(/[^a-z0-9\s./+-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function compactText(value: string) {
+  return value.replace(/\s+/g, '');
 }
 
 function deriveSection(href: string) {
@@ -160,15 +394,112 @@ function deriveSection(href: string) {
     .replace(/\b\w/g, char => char.toUpperCase());
 }
 
+function splitTopics(text: string) {
+  return text
+    .split('|')
+    .map(value => value.trim())
+    .filter(Boolean);
+}
+
+function uniqueTerms(values: string[]) {
+  const unique: string[] = [];
+  for (const value of values) {
+    if (value && !unique.includes(value)) {
+      unique.push(value);
+    }
+  }
+  return unique;
+}
+
+function buildSearchTerms(entry: {
+  href: string;
+  kind: string;
+  keywords: string[];
+  section: string;
+  text: string;
+  title: string;
+}) {
+  const terms: SearchTerm[] = [];
+
+  const pushTerm = (label: string, weight: number) => {
+    const normalized = normalizeText(label);
+    if (!normalized || terms.some(term => term.normalized === normalized)) return;
+
+    terms.push({
+      label,
+      normalized,
+      compact: compactText(normalized),
+      weight,
+    });
+  };
+
+  pushTerm(entry.title, 70);
+  pushTerm(entry.kind, 26);
+  pushTerm(entry.section, 24);
+  for (const keyword of entry.keywords) {
+    pushTerm(keyword, 64);
+  }
+  for (const topic of splitTopics(entry.text)) {
+    pushTerm(topic, 52);
+  }
+
+  for (const part of entry.href.split('/').filter(Boolean)) {
+    pushTerm(part.replace(/-/g, ' '), 18);
+  }
+
+  return terms;
+}
+
+function createSearchEntry(params: {
+  excerpt?: string;
+  href: string;
+  kind?: string;
+  keywords?: string[];
+  section: string;
+  text?: string;
+  title: string;
+}): SearchIndexEntry {
+  const excerpt = params.excerpt?.trim() ?? '';
+  const keywords = uniqueTerms(Array.isArray(params.keywords) ? params.keywords.filter(Boolean) : []);
+  const kind = params.kind?.trim() || 'Page';
+  const text = params.text?.trim() ?? '';
+
+  const searchTerms = buildSearchTerms({
+    href: params.href,
+    kind,
+    keywords,
+    section: params.section,
+    text,
+    title: params.title,
+  });
+
+  return {
+    excerpt,
+    href: params.href,
+    kind,
+    keywords,
+    section: params.section,
+    text,
+    title: params.title,
+    excerptText: normalizeText(excerpt),
+    fullText: normalizeText(params.title, kind, params.section, keywords.join(' '), text, excerpt, params.href),
+    searchTerms,
+    titleText: normalizeText(params.title),
+  };
+}
+
 function normalizeStaticEntries(entries: SearchEntry[]): SearchIndexEntry[] {
   return entries.map(entry => {
     const section = deriveSection(entry.url);
-    return {
+    return createSearchEntry({
+      excerpt: entry.excerpt,
       href: entry.url,
-      title: entry.title,
+      kind: entry.kind,
+      keywords: entry.keywords,
       section,
-      searchText: normalizeText(entry.title, entry.text, section, entry.url, entry.keywords.join(' ')),
-    };
+      text: entry.text,
+      title: entry.title,
+    });
   });
 }
 
@@ -185,19 +516,15 @@ function normalizeBackendEntry(entry: BackendSearchEntry): SearchIndexEntry | nu
     ? entry.section.trim()
     : deriveSection(href);
 
-  return {
+  return createSearchEntry({
+    excerpt: typeof entry.excerpt === 'string' ? entry.excerpt : undefined,
     href,
-    title: entry.title,
+    kind: typeof entry.kind === 'string' ? entry.kind : undefined,
+    keywords: Array.isArray(entry.keywords) ? entry.keywords : [],
     section,
-    searchText: normalizeText(
-      entry.title,
-      typeof entry.text === 'string' ? entry.text : undefined,
-      typeof entry.excerpt === 'string' ? entry.excerpt : undefined,
-      section,
-      href,
-      Array.isArray(entry.keywords) ? entry.keywords.join(' ') : undefined,
-    ),
-  };
+    text: typeof entry.text === 'string' ? entry.text : undefined,
+    title: entry.title,
+  });
 }
 
 function normalizeSearchEntries(data: unknown): SearchIndexEntry[] {

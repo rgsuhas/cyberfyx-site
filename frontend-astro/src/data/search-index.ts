@@ -1,6 +1,7 @@
 export interface SearchEntry {
   title: string;
   url: string;
+  kind: string;
   excerpt: string;
   keywords: string[];
   text: string;
@@ -8,66 +9,121 @@ export interface SearchEntry {
 
 export const searchIndex: SearchEntry[] = [
   {
-    title: "Cyberfyx - Home",
-    url: "/",
-    excerpt: "Next-Generation Cybersecurity & IT Solutions",
-    keywords: ["home", "cybersecurity", "solutions"],
-    text: "Cyberfyx Home About Services Cybersecurity IT Security Endpoint Management Core Industry Training Industries Careers Contact Next-Generation Cybersecurity IT Solutions Empowering organizations with intelligence-led protection regulatory readiness and operational resilience for a digital-first world Explore Services Contact an Expert Purpose-Built Security Designed for todays dynamic threat landscape with intelligence-driven architectures End-to-End Coverage Protecting infrastructure data and users across on-prem cloud and hybrid environments Rapid Response Real-time threat mitigation digital forensics and incident response when every second matters"
+    title: 'Next-Generation Cybersecurity & IT Solutions',
+    url: '/',
+    kind: 'Overview',
+    excerpt: 'Empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience for a digital-first world.',
+    keywords: ['Cybersecurity', 'IT Solutions', 'Managed Security', 'Compliance', 'Advisory'],
+    text: 'Purpose-Built Security | End-to-End Coverage | Rapid Response',
   },
   {
-    title: "Cyberfyx - About Us",
-    url: "/about",
-    excerpt: "A globally trusted leader in cybersecurity and smart IT management",
-    keywords: ["about", "mission", "vision", "company"],
-    text: "About Cyberfyx A globally trusted leader in cybersecurity and smart IT management Empowering Organizations for a Digital-First World Cyberfyx is focused on empowering organizations with intelligence-led protection regulatory readiness and operational resilience With a holistic approach to cybersecurity and IT governance we deliver outcome-driven services Our Vision We empower businesses to operate confidently with secure compliant and resilient digital environments Our Mission We help enterprises stay compliant reduce risk and optimize operations through expert consulting automation and managed services"
+    title: 'About Cyberfyx',
+    url: '/about',
+    kind: 'Company',
+    excerpt: 'A globally trusted leader in cybersecurity and smart IT management, empowering organizations with intelligence-led protection, regulatory readiness, and operational resilience.',
+    keywords: ['About', 'Mission', 'Vision', 'Company'],
+    text: 'Our Mission | Our Vision | Our Core Values | Why Choose Cyberfyx',
   },
   {
-    title: "Cyberfyx - Services",
-    url: "/services",
-    excerpt: "Our Core Services including Cybersecurity, Endpoint Management, IT Security",
-    keywords: ["services", "cybersecurity", "endpoint", "it security"],
-    text: "Services Cybersecurity Endpoint Management IT Security Core Industry Services Training Protect against rapidly evolving digital threats with our comprehensive cybersecurity frameworks Advanced Threat Protection ATP Data Loss Prevention DLP Security-as-a-Service SECaaS Smart secure management for devices across your entire enterprise Unified Endpoint Management UEM Patch Management Automated Device Provisioning Modernize your infrastructure safely with robust IT security standards Identity Access Management IAM Cloud Infrastructure Security Zero-Trust Architecture"
+    title: 'Our Core Services',
+    url: '/services',
+    kind: 'Solutions',
+    excerpt: 'Comprehensive, end-to-end outcome-driven solutions that protect your infrastructure and optimize business operations.',
+    keywords: ['Services', 'Solutions', 'Cybersecurity', 'IT Security', 'Endpoint Management', 'Training'],
+    text: 'Cybersecurity | Endpoint Management | IT Security | Core Industry Services | Training',
   },
   {
-    title: "Cyberfyx - Cybersecurity",
-    url: "/services/cybersecurity",
-    excerpt: "Advanced Cybersecurity VAPT GRC vCISO DPO Red Team SOC",
-    keywords: ["cybersecurity", "vapt", "red team", "soc", "vciso", "dpo", "compliance"],
-    text: "Cybersecurity CYBERFYX delivers end-to-end cyber security services helping organizations secure their IT infrastructure achieve regulatory compliance and reduce cyber risks Our offerings include VAPT GRC maintenance PCI DSS readiness DPDPA implementation privacy audits red team assessments and attack surface management We also provide virtual CISO DPO services and specialized IT staffing VAPT vulnerability assessment penetration testing GRC Governance Risk Compliance PCI DSS Readiness vCISO and DPO services GDPR CCPA DPDPA compliance Red Team Assignment Security Operation Center SOC HIPAA SOC 2 Type 2 CMMI"
+    title: 'Cybersecurity Services',
+    url: '/services/cybersecurity',
+    kind: 'Service',
+    excerpt: 'Cyberfyx delivers end-to-end cybersecurity services that help organizations reduce risk, strengthen resilience, and stay audit-ready across evolving compliance requirements.',
+    keywords: [
+      'Cybersecurity',
+      'VAPT',
+      'Vulnerability Assessment',
+      'Penetration Testing',
+      'GRC',
+      'PCI DSS',
+      'GDPR',
+      'CCPA',
+      'DPDPA',
+      'vCISO',
+      'DPO',
+      'Red Team',
+      'SOC',
+      'SOC 2',
+      'HIPAA',
+      'CMMI',
+    ],
+    text: 'VAPT | GRC Maintenance | PCI DSS Readiness | vCISO and DPO | GDPR CCPA DPDPA | Red Team | SOC 2 | HIPAA | CMMI',
   },
   {
-    title: "Cyberfyx - IT Security",
-    url: "/services/it-security",
-    excerpt: "IT Security Solutions ISO 27001 ISO 27701 ISO 22301 Cloud Security",
-    keywords: ["it security", "iso 27001", "iso 27701", "iso 22301", "compliance", "audit"],
-    text: "IT Security Solutions Cyberfyx brings robust capabilities in delivering scalable end-to-end IT security services tailored for diverse industry needs Our team comprises certified security professionals with hands-on experience across cloud on-premise and hybrid infrastructures ISO 27001:2022 Information Security Management System Establishes a risk-based security framework ISO 27701:2019 Privacy Information Management System Extends ISO 27001 for data privacy governance ISO 22301:2019 Business Continuity Management System Ensures preparedness and resilience ISO 20000-1:2018 IT Service Management System Cloud Security and Privacy Controls Internal Audits and Assessments"
+    title: 'IT Security Solutions',
+    url: '/services/it-security',
+    kind: 'Service',
+    excerpt: 'Cyberfyx delivers scalable, end-to-end IT security services tailored for diverse industry needs.',
+    keywords: [
+      'IT Security',
+      'ISO 27001',
+      'ISO 27701',
+      'ISO 22301',
+      'ISO 20000',
+      'ISO 27017',
+      'ISO 27018',
+      'ISO 42001',
+      'CSA STAR',
+      'TISAX',
+      'Internal Audit',
+      'Cloud Security',
+    ],
+    text: 'ISO 27001 | ISO 27701 | ISO 22301 | ISO 20000 | ISO 27017 and 27018 | ISO 42001 | CSA STAR | TISAX | Internal Audits',
   },
   {
-    title: "Cyberfyx - Endpoint Management",
-    url: "/services/endpoint-management",
-    excerpt: "Smart Endpoint Management UEM MDM SIEM Monitoring NOC",
-    keywords: ["endpoint", "uem", "mdm", "siem", "monitoring", "management"],
-    text: "Endpoint Management CYBERFYX is a trusted authorized solution partner of IPM+ Endpoint Management Solutions empowering enterprises with intelligent and secure device management We deliver seamless deployment optimization and compliance-driven control across all endpoints Unified Endpoint Management System Endpoint Management Solutions Automated Device Provisioning Monitoring and Analytics Smart DC Datacenter Management SIEM Security Information Event Management Cloud NOC Backup Solutions"
+    title: 'Smart Endpoint Management',
+    url: '/services/endpoint-management',
+    kind: 'Service',
+    excerpt: 'CYBERFYX empowers enterprises with intelligent and secure device management through IPM+ endpoint management solutions.',
+    keywords: ['Endpoint Management', 'UEM', 'MDM', 'IPM+', 'SIEM', 'NOC', 'Backup', 'SmartDC', 'Datacenter', 'Monitoring'],
+    text: 'Unified Endpoint Management | Monitoring | SmartDC | SIEM | Cloud | NOC | Backup Solutions',
   },
   {
-    title: "Cyberfyx - Industries",
-    url: "/industries",
-    excerpt: "Industries We Protect Healthcare Finance Manufacturing Government",
-    keywords: ["industries", "healthcare", "finance", "manufacturing", "government", "enterprise"],
-    text: "Industries We Protect Tailored cybersecurity and IT governance frameworks built for specific sector requirements Healthcare Banking and Finance Retail and E-Commerce Manufacturing Education and EdTech Defense and Aerospace Information Technology Energy and Utilities Government and Public Sector Telecom Transport and Logistics Media and Entertainment"
+    title: 'Core Industry Services',
+    url: '/services/core-industry',
+    kind: 'Service',
+    excerpt: 'Cyberfyx provides end-to-end support across assessments, documentation, training, audits, certification liaison, and maintenance.',
+    keywords: ['Core Industry Services', 'ISO 9001', 'ISO 14001', 'ISO 45001', 'AS9100', 'IATF 16949', 'SEDEX', 'SMETA', 'FSC', 'Fire Safety Audit'],
+    text: 'ISO 9001 | ISO 14001 | ISO 45001 | AS9100 | IATF 16949 | Fire Safety Audit | FSC Audit | SEDEX SMETA',
   },
   {
-    title: "Cyberfyx - Careers",
-    url: "/careers",
-    excerpt: "Join the Cyberfyx Team and grow your career",
-    keywords: ["careers", "jobs", "hiring", "opportunities"],
-    text: "Join the Cyberfyx Team We are always looking for passionate cybersecurity experts and IT professionals Current Openings We are currently updating our careers board Please check back later or send your resume to our hr team Send Resume to HR"
+    title: 'Cybersecurity Training',
+    url: '/services/training',
+    kind: 'Service',
+    excerpt: 'Empower your workforce with the knowledge and skills needed to recognize and prevent cyber attacks before they impact your business.',
+    keywords: ['Training', 'Security Awareness', 'ISO 27001 Training', 'GDPR Training', 'HIPAA Training', 'PCI DSS Training', 'NIST CSF', 'Business Continuity', 'Disaster Recovery'],
+    text: 'ISO 27001 Awareness | GDPR Workshop | HIPAA Security and Privacy | PCI DSS Readiness | NIST CSF | Business Continuity and Disaster Recovery',
   },
   {
-    title: "Cyberfyx - Contact Us",
-    url: "/contact",
-    excerpt: "Get in Touch with Cyberfyx for assessments and consultations",
-    keywords: ["contact", "email", "phone", "location", "inquiry"],
-    text: "Contact Us Get in Touch Whether you need an immediate cybersecurity assessment managed endpoint services or ISO consultation our team is ready to assist you Office Location Janardhana Towers Ashok Nagar Bengaluru 560025 Phone Number 91 9663410308 Email Address sales@cyberfyx.net Send Us a Message Full Name Email Address Service Interested In Cybersecurity Endpoint Management IT Security ISO Consultation Other"
-  }
+    title: 'Industries We Protect',
+    url: '/industries',
+    kind: 'Industry',
+    excerpt: 'Cyberfyx delivers tailored cybersecurity and IT governance frameworks for diverse sectors including healthcare, finance, manufacturing, and more.',
+    keywords: ['Industries', 'Healthcare', 'Banking', 'Finance', 'Retail', 'Manufacturing', 'Government', 'Telecom', 'Logistics', 'Education'],
+    text: 'Healthcare | Banking and Finance | Retail and E-Commerce | Manufacturing | Government and Public Sector | Telecom | Transport and Logistics',
+  },
+  {
+    title: 'Join Our Team at Cyberfyx',
+    url: '/careers',
+    kind: 'Careers',
+    excerpt: "We're hiring security professionals, consultants, and IT specialists to help organizations protect their digital future.",
+    keywords: ['Careers', 'Jobs', 'Hiring', 'Apply', 'Resume'],
+    text: 'Open Positions | Senior Security Consultant | Endpoint Management Engineer | Penetration Tester | Security Operations Analyst',
+  },
+  {
+    title: 'Get in Touch',
+    url: '/contact',
+    kind: 'Contact',
+    excerpt: 'Whether you need an immediate cybersecurity assessment, managed endpoint services, or ISO consultation, our team is ready to assist you.',
+    keywords: ['Contact', 'Get Quote', 'Quote', 'Inquiry', 'Talk to Expert'],
+    text: 'Get in Touch | Start the conversation | Tell us about your needs',
+  },
 ];

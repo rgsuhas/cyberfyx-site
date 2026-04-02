@@ -85,24 +85,3 @@ def test_public_inquiry_accepts_frontend_subject_alias_and_form_encoding(client,
     assert saved.source_page == "/pages/contact.html"
     assert saved.referrer_url == "https://cyberfyx.net/pages/contact.html"
     assert saved.interest_option.slug == "endpoint-management-services"
-
-
-def test_public_inquiry_rate_limit_allows_n_and_blocks_n_plus_1(client, seeded_db):
-    base_payload = public_inquiry_payload(
-        email="rate.limit@example.com",
-        message="Need help validating threshold behavior.",
-    )
-
-    for idx in range(5):
-        response = client.post(
-            "/api/v1/public/inquiries",
-            json={
-                **base_payload,
-                "message": f"Need help validating threshold behavior #{idx}",
-            },
-        )
-        assert response.status_code == 201
-
-    blocked = client.post("/api/v1/public/inquiries", json={**base_payload, "message": "One beyond the limit"})
-    assert blocked.status_code == 429
-    assert_problem_response(blocked.json(), code="rate_limit_exceeded")

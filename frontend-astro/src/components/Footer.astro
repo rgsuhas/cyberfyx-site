@@ -34,24 +34,36 @@ const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
       ))}
 
       <div>
-        <h4 class="footer-heading">Contact Us</h4>
+        <a href="/contact/" class="btn btn-primary footer-quote-btn">Get Quote</a>
         <ul class="footer-links footer-contact">
+          <li class="footer-social-item">
+            <a
+              href="https://www.linkedin.com/company/cyberfyx-net/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-linkedin-link"
+            >
+              <i class="fa-brands fa-linkedin-in footer-social-icon" aria-hidden="true"></i>
+              <span class="footer-linkedin-copy">
+                <span class="footer-linkedin-title">Cyberfyx on LinkedIn</span>
+                <span>Updates, insights, and announcements</span>
+              </span>
+            </a>
+          </li>
           <li>
-            <span class="footer-icon"
+            <i class="fa-solid fa-location-dot"
                onclick={`window.open('${profile.map_url}', '_blank')`}
-               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;" aria-hidden="true">
-              <i class="fa-solid fa-location-dot"></i>
-            </span>
+               style="margin-top: 5px; color: var(--accent-primary); cursor: pointer;"></i>
             <span set:html={profile.headquarters_address.replace(', ', ',<br>')}></span>
           </li>
           <li>
-            <span class="footer-icon" style="margin-top: 5px; color: var(--accent-primary);" aria-hidden="true">✉</span>
+            <i class="fa-solid fa-envelope" style="margin-top: 5px; color: var(--accent-primary);"></i>
             <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${profile.sales_email}`} target="_blank">
               {profile.sales_email}
             </a>
           </li>
           <li>
-            <span class="footer-icon" style="margin-top: 5px; color: var(--accent-primary);" aria-hidden="true">☎</span>
+            <i class="fa-solid fa-phone" style="margin-top: 5px; color: var(--accent-primary);"></i>
             <a href={`tel:${profile.primary_phone.replace(/\s/g, '')}`}>{profile.primary_phone}</a>
           </li>
         </ul>

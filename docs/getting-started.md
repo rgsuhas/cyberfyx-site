@@ -113,6 +113,4 @@ To process background tasks like email notifications, start the outbox worker:
 cd backend
 # With venv active
 python -m app.worker
-# or run continuously every 5 minutes
-python -m app.worker --loop --interval-seconds 300
 ```

@@ -49,8 +49,10 @@ def test_contact_profile_includes_office_regions_and_active_interests(client, se
     assert payload["sales_email"] == "sales@cyberfyx.net"
     assert payload["headquarters_name"] == "Cyberfyx"
 
+    regions = extract_collection_items(payload.get("office_regions"))
     interests = extract_collection_items(payload.get("interest_options"))
 
+    assert [region["slug"] for region in regions] == ["india", "singapore", "philippines", "dubai"]
     assert [interest["slug"] for interest in interests] == [
         "iso-consultation-services",
         "cybersecurity-services",
@@ -74,9 +76,20 @@ def test_search_index_exposes_served_frontend_pages(client):
 
     assert "/" in by_href
     assert "/contact" in by_href
-    assert by_href["/contact"]["title"] == "Contact Cyberfyx | Start a Security Conversation"
+    assert "/services/core-industry" in by_href
+    assert "/services/training" in by_href
+    assert by_href["/contact"]["title"] == "Get in Touch"
+    assert by_href["/contact"]["kind"] == "Contact"
     assert by_href["/contact"]["section"] == "Contact"
-    assert "Get in Touch" in by_href["/contact"]["text"]
+    assert by_href["/contact"]["excerpt"] == (
+        "Whether you need an immediate cybersecurity assessment, managed endpoint services, "
+        "or ISO consultation, our team is ready to assist you."
+    )
+    assert "Office Location" not in by_href["/contact"]["text"]
+    assert "Contact" in by_href["/contact"]["keywords"]
+    assert "Get Quote" in by_href["/contact"]["keywords"]
+    assert "VAPT" in by_href["/services/cybersecurity"]["keywords"]
+    assert "ISO 27001" in by_href["/services/it-security"]["keywords"]
     assert "/admin" not in by_href
 
 

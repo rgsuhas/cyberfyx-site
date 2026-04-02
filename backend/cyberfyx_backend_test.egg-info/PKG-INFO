@@ -11,7 +11,6 @@ Requires-Dist: passlib[argon2]==1.7.4
 Requires-Dist: pydantic-settings==2.6.1
 Requires-Dist: PyJWT==2.9.0
 Requires-Dist: python-multipart==0.0.17
-Requires-Dist: slowapi==0.1.9
 Requires-Dist: SQLAlchemy==2.0.36
 Requires-Dist: uvicorn[standard]==0.32.0
 Provides-Extra: dev
