@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "11",
-    "astro": "^4.16.0"
+    "astro": "^4.16.0",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
