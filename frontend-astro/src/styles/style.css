@@ -237,14 +237,6 @@ section {
 }
 
 /* Alternate glass card styling */
-.glass-card:nth-child(2n) {
-  background: var(--bg-glass-alt);
-}
-
-.glass-card:nth-child(3n) {
-  background: var(--bg-glass-accent);
-}
-
 /* Header, search, dropdown, and footer shell styles are split into partials
    to keep future branch changes from colliding in one large shared file. */
 
@@ -264,14 +256,14 @@ section {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(53, 29, 117, 0.12) 0%, rgba(10, 31, 61, 0.08) 50%, rgba(231, 135, 49, 0.06) 100%),
-    radial-gradient(circle at 70% 30%, rgba(var(--accent-primary-rgb), 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 30% 70%, rgba(var(--accent-secondary-rgb), 0.09) 0%, transparent 50%);
+  background: linear-gradient(135deg, rgba(53, 29, 117, 0.18) 0%, rgba(10, 31, 61, 0.11) 48%, rgba(231, 135, 49, 0.09) 100%),
+    radial-gradient(circle at 70% 30%, rgba(var(--accent-primary-rgb), 0.15) 0%, transparent 54%),
+    radial-gradient(circle at 30% 70%, rgba(var(--accent-secondary-rgb), 0.13) 0%, transparent 56%);
   z-index: -1;
 }
 
 [data-theme="dark"] .hero::before {
-  background: linear-gradient(135deg, rgba(53, 29, 117, 0.22) 0%, rgba(10, 31, 61, 0.15) 50%, rgba(231, 135, 49, 0.15) 100%),
+  background: linear-gradient(135deg, rgba(53, 29, 117, 0.3) 0%, rgba(10, 31, 61, 0.2) 50%, rgba(231, 135, 49, 0.2) 100%),
     radial-gradient(circle at 70% 30%, rgba(var(--accent-primary-rgb), 0.18) 0%, transparent 50%),
     radial-gradient(circle at 30% 70%, rgba(var(--accent-secondary-rgb), 0.18) 0%, transparent 50%);
 }
@@ -281,6 +273,10 @@ section {
   position: relative;
   z-index: 2;
   padding: 2rem 0;
+}
+
+.contact-split {
+  align-items: start;
 }
 
 .hero-layout {
@@ -867,14 +863,30 @@ section {
 
 .industry-card i {
   font-size: 3rem;
-  color: var(--accent-primary);
+  color: var(--logo-text-primary);
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
 .industry-card:hover i {
   transform: scale(1.1) translateY(-10px);
-  color: var(--accent-secondary);
+  color: var(--logo-text-secondary);
+}
+
+.industries-grid .industry-card:nth-child(4n + 1) {
+  background: var(--bg-glass);
+}
+
+.industries-grid .industry-card:nth-child(4n + 2) {
+  background: var(--bg-glass-alt);
+}
+
+.industries-grid .industry-card:nth-child(4n + 3) {
+  background: var(--bg-glass-accent);
+}
+
+.industries-grid .industry-card:nth-child(4n + 4) {
+  background: color-mix(in srgb, var(--bg-glass) 70%, var(--bg-glass-accent) 30%);
 }
 
 /* Form Styles */

@@ -14,6 +14,9 @@ export function initHeroGrid() {
   let height = 0;
   let animationId = 0;
   let sweepOffset = 0;
+  let lastFrameTime = performance.now();
+  let isAnimating = false;
+  let resizeRaf = 0;
 
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -151,6 +154,11 @@ export function initHeroGrid() {
   }
 
   function render() {
+    isAnimating = true;
+    const now = performance.now();
+    const deltaMultiplier = Math.min((now - lastFrameTime) / 16.67, 2.4);
+    lastFrameTime = now;
+
     drawBackdrop();
     drawSweep();
     drawConnections();
@@ -158,14 +166,26 @@ export function initHeroGrid() {
 
     if (!prefersReducedMotion) {
       updateNodes();
-      sweepOffset += 0.6;
+      sweepOffset += 0.6 * deltaMultiplier;
       animationId = window.requestAnimationFrame(render);
+      return;
     }
+
+    isAnimating = false;
   }
 
   const resizeObserver = new ResizeObserver(() => {
-    resizeCanvas();
-    render();
+    if (resizeRaf) return;
+    resizeRaf = window.requestAnimationFrame(() => {
+      resizeRaf = 0;
+      resizeCanvas();
+
+      if (prefersReducedMotion) {
+        render();
+      } else if (!isAnimating) {
+        render();
+      }
+    });
   });
 
   resizeObserver.observe(canvas);
@@ -177,6 +197,9 @@ export function initHeroGrid() {
     () => {
       if (animationId) {
         window.cancelAnimationFrame(animationId);
+      }
+      if (resizeRaf) {
+        window.cancelAnimationFrame(resizeRaf);
       }
       resizeObserver.disconnect();
     },

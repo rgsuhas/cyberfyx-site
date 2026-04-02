@@ -1,5 +1,6 @@
 const activeAnimations = new WeakMap<HTMLElement, number>();
 let counterObserver: IntersectionObserver | null = null;
+const COUNTER_LOCK_KEY = 'cyberfyx-counters-complete';
 
 const STORAGE_KEY = 'cyberfyx_counters_animated';
 let isPageReload = false;
@@ -49,6 +50,14 @@ export function initCounters() {
 
 function prepareCounter(counter: HTMLElement, hasAnimatedBefore: boolean) {
   const target = parseInt(counter.getAttribute('data-target') || '0', 10);
+  const isCounterLocked = window.sessionStorage.getItem(COUNTER_LOCK_KEY) === 'true';
+  if (isCounterLocked) {
+    stopCounterAnimation(counter);
+    counter.textContent = target.toString();
+    counter.setAttribute('data-animated', 'true');
+    return;
+  }
+
   const renderedValue = parseInt(counter.textContent || '0', 10);
   const isAlreadyComplete = counter.getAttribute('data-animated') === 'true' && renderedValue === target;
 
@@ -75,6 +84,7 @@ function animateWhenNeeded(counter: HTMLElement) {
   const target = parseInt(counter.getAttribute('data-target') || '0', 10);
   animateCounter(counter, target);
   counter.setAttribute('data-animated', 'true');
+  window.sessionStorage.setItem(COUNTER_LOCK_KEY, 'true');
 }
 
 function stopCounterAnimation(counter: HTMLElement) {
