@@ -1,0 +1,89 @@
+---
+interface Props {
+  gap?: number;
+  reverse?: boolean;
+  speed?: number;
+  speedOnHover?: number;
+  class?: string;
+}
+
+const {
+  gap = 42,
+  reverse = false,
+  speed = 80,
+  speedOnHover = 25,
+  class: className = "",
+} = Astro.props;
+
+const animationDuration = `${speed}s`;
+const hoverDuration = `${speedOnHover}s`;
+const gapPixels = `${gap}px`;
+---
+
+<div class={`infinite-slider-wrapper ${className}`}>
+  <div
+    class={`infinite-slider ${reverse ? "reverse" : ""}`}
+    style={{
+      "--animation-duration": animationDuration,
+      "--hover-duration": hoverDuration,
+      "--gap": gapPixels,
+    } as any}
+  >
+    <div class="infinite-slider-content">
+      <slot />
+    </div>
+    <div class="infinite-slider-content" aria-hidden="true">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .infinite-slider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .infinite-slider {
+    display: flex;
+    width: fit-content;
+    gap: var(--gap, 42px);
+    animation: slide var(--animation-duration, 80s) linear infinite;
+    transition: opacity var(--transition-fast);
+  }
+
+  .infinite-slider.reverse {
+    animation: slide-reverse var(--animation-duration, 80s) linear infinite;
+  }
+
+  .infinite-slider:hover {
+    animation-play-state: paused;
+    opacity: 0.9;
+  }
+
+  .infinite-slider-content {
+    display: flex;
+    gap: var(--gap, 42px);
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap, 42px)));
+    }
+  }
+
+  @keyframes slide-reverse {
+    from {
+      transform: translateX(calc(-100% - var(--gap, 42px)));
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+</style>

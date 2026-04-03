@@ -1,8 +1,39 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassCard from '../components/GlassCard.astro';
+import LogoCloud from '../components/LogoCloud.astro';
 
 void GlassCard;
+
+const logos = [
+  { src: '/logos/accenture.png', alt: 'Accenture' },
+  { src: '/logos/aditya birla capital.png', alt: 'Aditya Birla Capital' },
+  { src: '/logos/aditya birla group.png', alt: 'Aditya Birla Group' },
+  { src: '/logos/anoop ceramics.png', alt: 'Anoop Ceramics' },
+  { src: '/logos/avendus.png', alt: 'Avendus' },
+  { src: '/logos/cyber bee.png', alt: 'Cyber Bee' },
+  { src: '/logos/eton solutions.png', alt: 'Eton Solutions' },
+  { src: '/logos/hdfc.png', alt: 'HDFC' },
+  { src: '/logos/icici lombard.png', alt: 'ICICI Lombard' },
+  { src: '/logos/incture.png', alt: 'Incture' },
+  { src: '/logos/india post.jpeg', alt: 'India Post' },
+  { src: '/logos/kewaunee.png', alt: 'Kewaunee' },
+  { src: '/logos/kluber lubrication.jpeg', alt: 'Kluber Lubrication' },
+  { src: '/logos/larsen & toubro.png', alt: 'Larsen & Toubro' },
+  { src: '/logos/lic.png', alt: 'LIC' },
+  { src: '/logos/nkgsb.png', alt: 'NKGSB' },
+  { src: '/logos/pine labs.png', alt: 'Pine Labs' },
+  { src: '/logos/platform 3 solutions.png', alt: 'Platform 3 Solutions' },
+  { src: '/logos/rangsons aerospace.png', alt: 'Rangsons Aerospace' },
+  { src: '/logos/reliance.png', alt: 'Reliance' },
+  { src: '/logos/sbi.png', alt: 'SBI' },
+  { src: '/logos/societe general.png', alt: 'Societe General' },
+  { src: '/logos/tata aig insurance.png', alt: 'Tata AIG Insurance' },
+  { src: '/logos/tata power ddl.png', alt: 'Tata Power DDL' },
+  { src: '/logos/tech pennar.png', alt: 'Tech Pennar' },
+  { src: '/logos/vardhman textiles.png', alt: 'Vardhman Textiles' },
+  { src: '/logos/zkteco.png', alt: 'ZKTECO' },
+];
 ---
 
 <BaseLayout title="Cyberfyx | Next-Generation Cybersecurity & IT Solutions">
@@ -121,6 +152,22 @@ void GlassCard;
     </div>
   </section>
 
+  <!-- Trusted By Section with Logo Cloud Animation -->
+  <section style="background: linear-gradient(135deg, rgba(231, 135, 49, 0.04) 0%, rgba(53, 29, 117, 0.04) 50%, rgba(231, 135, 49, 0.04) 100%); padding: 3rem 0;">
+    <div class="container">
+      <div class="section-header fade-up">
+        <h2>Trusted by Leading <span class="text-gradient">Enterprises</span></h2>
+        <p>Partnering with India's most respected organizations across financial services, technology, and industry.</p>
+      </div>
+      <LogoCloud 
+        logos={logos}
+        speed={200}
+        speedOnHover={30}
+        class="fade-up"
+      />
+    </div>
+  </section>
+
   <!-- Services Section -->
   <section id="services" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(10, 31, 61, 0.05) 50%, rgba(248, 250, 252, 0) 100%);">
     <div class="container">
@@ -196,7 +243,7 @@ void GlassCard;
   <!-- Contact Section -->
   <section id="contact" style="background: linear-gradient(135deg, rgba(248, 250, 252, 0) 0%, rgba(53, 29, 117, 0.05) 50%, rgba(248, 250, 252, 0) 100%);">
     <div class="container">
-      <div class="grid grid-2" style="gap: 4rem;">
+      <div class="grid grid-2 contact-split" style="gap: 4rem;">
         <div class="fade-up">
           <h2 style="margin-bottom: 2rem;">Get in <span class="text-gradient">Touch</span></h2>
           <p style="margin-bottom: 3rem; font-size: 1.1rem;">Whether you need an immediate cybersecurity assessment, managed endpoint services, or ISO consultation, our team is ready to assist you.</p>
