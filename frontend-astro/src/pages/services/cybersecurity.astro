@@ -1,15 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchTrackData } from '../../lib/api';
+import { CYBERSECURITY_FALLBACK } from '../../lib/fallbacks';
+
+const track = (await fetchTrackData('cybersecurity')) ?? CYBERSECURITY_FALLBACK;
 ---
 
-<BaseLayout title="Cybersecurity Services | Cyberfyx">
+<BaseLayout title={`${track.title} Services | Cyberfyx`}>
   <section style="padding-top: 100px; padding-bottom: 60px;">
     <div class="container">
       <div class="grid grid-2" style="align-items: center; gap: 4rem;">
         <div class="fade-up">
-          <h1 style="margin-bottom: 1.5rem;">Cybersecurity Services</h1>
-          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">Cyberfyx brings robust capabilities in delivering scalable, end-to-end IT security services tailored for diverse industry needs. Our team comprises certified security professionals with hands-on experience across cloud, on-premise, and hybrid infrastructures. With proven execution in vulnerability management, compliance (ISO 27001, ISO 27701, ISO 22301 etc), endpoint protection, and red team operations, we serve clients ranging from startups to large enterprises. Backed by strong GRC expertise and strategic advisory support , Cyberfyx ensures organizations are both resilient and audit-ready. Our adaptable staffing and 24/7 support models ensure rapid response and long-term security program success.</p>
-        
+          <h1 style="margin-bottom: 1.5rem;">{track.hero_title}</h1>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">{track.hero_body}</p>
         </div>
         <div class="glass-card fade-up delay-100" style="text-align: center; padding: 4rem;">
           <i class="fa-solid fa-shield-halved" style="font-size: 6rem; color: var(--accent-secondary);"></i>
@@ -21,56 +24,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <section style="background: var(--bg-secondary);">
     <div class="container">
       <div class="section-header fade-up">
-        <h2>Our <span class="text-gradient">Cybersecurity Solutions</span></h2>
+        <h2>Our <span class="text-gradient">{track.title} Solutions</span></h2>
       </div>
 
-    <div class="container fade-up">
-      
-      
       <div class="grid grid-3" style="gap: 2rem;">
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-laptop-medical"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">VAPT</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-tools"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">GRC Maintenance</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-regular fa-credit-card"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">PCI DSS Readiness</h3>
-        </div>
-
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-display"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">vCiso & DPO</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-user-secret"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">GDPR - CCPA - DPDPA</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-users"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">Red Team Assignment</h3>
-        </div>
-
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-users-gear"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">Security Operation Center</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-folder-open"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">HIPPA</h3>
-        </div>
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-money-bill-transfer"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">SOC 2 Type 2</h3>
-        </div>
-
-        <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem; grid-column: 2 / span 1;">
-          <div class="service-icon" style="margin: 0 auto 1.5rem auto; font-size: 2rem;"><i class="fa-solid fa-gauge"></i></div>
-          <h3 style="margin-bottom: 0; font-size: 1.18rem;">CMMI</h3>
-        </div>
+        {track.offerings.map((offering) => (
+          <div class="glass-card fade-up service-card-minimal" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 220px; padding: 2.25rem 1.75rem;">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.18rem;">{offering.title}</h3>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;">{offering.kicker}</p>
+          </div>
+        ))}
       </div>
 
       <div style="text-align: center; margin-top: 3rem;">
