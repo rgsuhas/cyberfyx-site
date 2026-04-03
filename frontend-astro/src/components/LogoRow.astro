@@ -34,8 +34,8 @@ const {
             <img
               src={logo.src}
               alt={logo.alt}
-              loading="eager"
-              decoding="sync"
+              loading="lazy"
+              decoding="async"
               style={logo.scale ? `--logo-scale:${logo.scale};` : undefined}
             />
           </div>
@@ -54,8 +54,8 @@ const {
             <img
               src={logo.src}
               alt=""
-              loading="eager"
-              decoding="sync"
+              loading="lazy"
+              decoding="async"
               style={logo.scale ? `--logo-scale:${logo.scale};` : undefined}
             />
           </div>

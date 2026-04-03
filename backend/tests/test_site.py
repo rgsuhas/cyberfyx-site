@@ -30,11 +30,23 @@ def test_frontend_root_and_contact_page_are_served(client):
     script_paths = re.findall(r'<script[^>]+src="([^"]+)"', contact_page.text)
     assert script_paths
 
-    script_bodies = []
-    for script_path in script_paths:
-        frontend_script = client.get(script_path)
-        assert frontend_script.status_code == 200
-        script_bodies.append(frontend_script.text)
+    seen_paths: set[str] = set()
+    script_bodies: list[str] = []
+
+    def collect_script(path: str) -> None:
+        if path in seen_paths:
+            return
+        seen_paths.add(path)
+        resp = client.get(path)
+        assert resp.status_code == 200
+        body = resp.text
+        script_bodies.append(body)
+        base = path.rsplit("/", 1)[0]
+        for rel in re.findall(r'import\s*["\'](\./[^"\']+)["\']', body):
+            collect_script(f"{base}/{rel[2:]}")
+
+    for path in script_paths:
+        collect_script(path)
 
     assert any("/api/v1/public/inquiries" in body for body in script_bodies)
 

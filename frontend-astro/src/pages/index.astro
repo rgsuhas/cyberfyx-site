@@ -258,18 +258,18 @@ const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
   <!-- Client Logo Cloud -->
   <section class="logo-cloud-section">
     <div class="container">
-      <div class="logo-cloud-panel fade-up visible">
+      <div class="logo-cloud-panel fade-up">
         <div class="logo-cloud-intro">
           <h2>Our Clients</h2>
         </div>
 
         <div class="logo-cloud-layout">
-          <div class="logo-category fade-up visible" aria-label="Cybersecurity clients">
+          <div class="logo-category fade-up" aria-label="Cybersecurity clients">
             <p class="logo-category-label">Cybersecurity clients</p>
             <LogoRow logos={cybersecurityClientLogos} speedSeconds={36} />
           </div>
 
-          <div class="logo-category fade-up visible delay-100" aria-label="Endpoint clients">
+          <div class="logo-category fade-up delay-100" aria-label="Endpoint clients">
             <p class="logo-category-label">Endpoint clients</p>
             <div class="logo-row-stack">
               {endpointLogoRows.map((row) => (

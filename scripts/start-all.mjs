@@ -96,8 +96,11 @@ async function ensureBackendVirtualEnv(python, backendPython) {
   }
 
   if (!backendHasPip(backendPython)) {
+    const activateHint = process.platform === 'win32'
+      ? 'In PowerShell: .\\backend\\.venv\\Scripts\\Activate.ps1'
+      : 'On Linux/macOS: source backend/.venv/bin/activate';
     throw new Error(
-      'The backend virtual environment was created without pip. Repair the Python installation used by npm start and retry. In PowerShell, the manual activation command is .\\backend\\.venv\\Scripts\\Activate.ps1.',
+      `The backend virtual environment was created without pip. Repair the Python installation used by npm start and retry. ${activateHint}`,
     );
   }
 }
