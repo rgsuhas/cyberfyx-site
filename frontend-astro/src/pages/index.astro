@@ -14,12 +14,9 @@ const endpointLogoRows = [
   { logos: endpointClientLogos.slice(9, 18), reverse: false, speedSeconds: 42 },
 ];
 import ContactForm from '../components/contact/ContactForm.astro';
-import { fetchContactProfile } from '../lib/api';
 import { CONTACT_PROFILE_FALLBACK } from '../lib/fallbacks';
 
-void GlassCard;
-
-const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
+const profile = CONTACT_PROFILE_FALLBACK;
 const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
 ---
 

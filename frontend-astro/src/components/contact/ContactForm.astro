@@ -1,14 +1,12 @@
 ---
-interface InterestOption {
-  slug: string;
-  label: string;
-}
-
-interface Props {
-  interestOptions?: InterestOption[];
-}
-
-const { interestOptions = [] } = Astro.props;
+const INTEREST_OPTIONS = [
+  { value: 'Cybersecurity', label: 'Cybersecurity' },
+  { value: 'IT Security', label: 'IT Security' },
+  { value: 'Endpoint Management', label: 'Endpoint Management' },
+  { value: 'Core Industry Services', label: 'Core Industry Services' },
+  { value: 'Training', label: 'Training' },
+  { value: 'General Inquiry', label: 'General Inquiry' },
+];
 ---
 <div class="contact-form-card fade-up delay-100">
   <div class="contact-form-header">
@@ -37,8 +35,8 @@ const { interestOptions = [] } = Astro.props;
       <!-- Native select: hidden but participates in FormData + validation -->
       <select id="subject" name="subject" class="cf-select-native" required tabindex="-1" aria-hidden="true">
         <option value="" disabled selected></option>
-        {interestOptions.map((opt) => (
-          <option value={opt.slug}>{opt.label}</option>
+        {INTEREST_OPTIONS.map((opt) => (
+          <option value={opt.value}>{opt.label}</option>
         ))}
       </select>
 
@@ -47,8 +45,8 @@ const { interestOptions = [] } = Astro.props;
         <span class="cf-custom-select-display"></span>
         <i class="fa-solid fa-chevron-down cf-select-icon"></i>
         <ul class="cf-custom-select-options" role="listbox">
-          {interestOptions.map((opt) => (
-            <li class="cf-custom-select-option" role="option" data-value={opt.slug}>{opt.label}</li>
+          {INTEREST_OPTIONS.map((opt) => (
+            <li class="cf-custom-select-option" role="option" data-value={opt.value}>{opt.label}</li>
           ))}
         </ul>
       </div>

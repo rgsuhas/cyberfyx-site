@@ -1,9 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchTrackData } from '../../lib/api';
 import { TRAINING_FALLBACK } from '../../lib/fallbacks';
 
-const track = (await fetchTrackData('training')) ?? TRAINING_FALLBACK;
+const track = TRAINING_FALLBACK;
 ---
 
 <BaseLayout title={`${track.title} | Cyberfyx`}>

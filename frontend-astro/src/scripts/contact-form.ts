@@ -1,78 +1,17 @@
 export {};
 
-const STATIC_INTEREST_OPTIONS = [
-  { slug: 'cybersecurity-services', label: 'Cybersecurity' },
-  { slug: 'it-security-and-continuity', label: 'IT Security' },
-  { slug: 'endpoint-management-services', label: 'Endpoint Management' },
-  { slug: 'core-industry-services', label: 'Core Industry Services' },
-  { slug: 'training', label: 'Training' },
-  { slug: 'general-inquiry', label: 'General Inquiry' },
-];
+const GOOGLE_FORM_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLScGbvgjRJBzo9UjxF9YDJbIwv-aru2qy1QX3zPlSBLBIDf60w/formResponse';
 
 const FIELD_MESSAGES: Record<string, { required: string; invalid?: string }> = {
-  name: {
-    required: 'Please fill out this field.',
-  },
+  name: { required: 'Please fill out this field.' },
   email: {
     required: 'Please fill out this field.',
     invalid: 'Please enter a valid email address.',
   },
-  subject: {
-    required: 'Please select an item in the list.',
-  },
-  message: {
-    required: 'Please fill out this field.',
-  },
+  subject: { required: 'Please select an item in the list.' },
+  message: { required: 'Please fill out this field.' },
 };
-
-function populateSelect(select: HTMLSelectElement, options: Array<{ slug: string; label: string }>) {
-  const currentValue = select.value;
-  select.innerHTML = '<option value="" disabled selected></option>';
-  options.forEach(opt => {
-    const el = document.createElement('option');
-    el.value = opt.slug;
-    el.textContent = opt.label;
-    if (currentValue && currentValue === opt.slug) {
-      el.selected = true;
-    }
-    select.appendChild(el);
-  });
-}
-
-async function loadInterestOptions(apiBase: string, select: HTMLSelectElement) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 4000);
-
-  try {
-    const res = await fetch(`${apiBase}/api/v1/public/site/contact-profile`, {
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    const profile = await res.json();
-    const options: Array<{ slug: string; label: string }> = profile.interest_options ?? [];
-    if (options.length === 0) throw new Error('empty');
-
-    populateSelect(select, options);
-  } catch {
-    clearTimeout(timer);
-    populateSelect(select, STATIC_INTEREST_OPTIONS);
-  }
-}
-
-function getTrackingFields() {
-  const params = new URLSearchParams(window.location.search);
-  return {
-    source_page: window.location.pathname,
-    referrer_url: document.referrer || undefined,
-    utm_source: params.get('utm_source') || undefined,
-    utm_medium: params.get('utm_medium') || undefined,
-    utm_campaign: params.get('utm_campaign') || undefined,
-    utm_content: params.get('utm_content') || undefined,
-    utm_term: params.get('utm_term') || undefined,
-  };
-}
 
 function ensureStatusElement(form: HTMLFormElement) {
   let statusDiv = form.querySelector('#form-status, [data-form-status]') as HTMLDivElement | null;
@@ -89,7 +28,6 @@ function ensureStatusElement(form: HTMLFormElement) {
   } else {
     form.appendChild(statusDiv);
   }
-
   return statusDiv;
 }
 
@@ -100,7 +38,6 @@ function getFieldContainer(field: HTMLElement) {
 function getFieldWarning(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
   const container = getFieldContainer(field) ?? field.parentElement;
   if (!container) return null;
-
   return container.querySelector('[data-field-warning]') as HTMLDivElement | null;
 }
 
@@ -109,24 +46,19 @@ function setFieldError(
   message?: string,
 ) {
   const container = getFieldContainer(field);
-
   field.classList.add('field-invalid');
   field.setAttribute('aria-invalid', 'true');
   container?.classList.add('field-has-error');
-  if (message) {
-    field.setCustomValidity(message);
-  }
+  if (message) field.setCustomValidity(message);
 }
 
 function clearFieldError(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
   const warning = getFieldWarning(field);
   const container = getFieldContainer(field);
-
   field.classList.remove('field-invalid');
   field.removeAttribute('aria-invalid');
   field.setCustomValidity('');
   container?.classList.remove('field-has-error');
-
   if (warning) {
     warning.textContent = '';
     warning.style.display = 'none';
@@ -134,32 +66,24 @@ function clearFieldError(field: HTMLInputElement | HTMLSelectElement | HTMLTextA
 }
 
 function getValidationMessage(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
-  const config = FIELD_MESSAGES[field.name] ?? {
-    required: 'Required field.',
-    invalid: 'Invalid value.',
-  };
-
+  const config = FIELD_MESSAGES[field.name] ?? { required: 'Required field.', invalid: 'Invalid value.' };
   if (field.validity.valueMissing) return config.required;
   if (field.validity.typeMismatch || field.validity.patternMismatch) {
     return config.invalid ?? 'Please enter a valid value.';
   }
-
   return 'Check this field.';
 }
 
 function syncNativeValidation(field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
   clearFieldError(field);
-
   if (field.validity.valueMissing) {
     setFieldError(field, getValidationMessage(field));
     return false;
   }
-
   if (field.validity.typeMismatch || field.validity.patternMismatch) {
     setFieldError(field, getValidationMessage(field));
     return false;
   }
-
   return true;
 }
 
@@ -176,13 +100,9 @@ function validateForm(form: HTMLFormElement): {
   ) as Array<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 
   let firstInvalidField: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null = null;
-
   fields.forEach(field => {
-    if (!validateField(field) && !firstInvalidField) {
-      firstInvalidField = field;
-    }
+    if (!validateField(field) && !firstInvalidField) firstInvalidField = field;
   });
-
   return { valid: firstInvalidField === null, firstInvalidField };
 }
 
@@ -192,18 +112,10 @@ function initContactForm(form: HTMLFormElement) {
 
   const statusDiv = ensureStatusElement(form);
   const submitBtn = form.querySelector('#submit-btn, button[type="submit"]') as HTMLButtonElement | null;
-  const subjectSel = form.querySelector('#subject, select[name="subject"]') as HTMLSelectElement | null;
   if (!submitBtn) return;
 
   const submitText = submitBtn.querySelector('.cf-submit-text') as HTMLElement | null;
   const defaultSubmitText = (submitText?.textContent ?? submitBtn.textContent ?? 'Send Message').trim();
-
-  const metaTag = document.querySelector('meta[name="cyberfyx-api-base"]');
-  const apiBase = metaTag?.getAttribute('content') ?? '';
-
-  if (subjectSel) {
-    void loadInterestOptions(apiBase, subjectSel);
-  }
 
   const fields = Array.from(
     form.querySelectorAll('input, select, textarea')
@@ -211,12 +123,8 @@ function initContactForm(form: HTMLFormElement) {
 
   fields.forEach(field => {
     const eventName = field.tagName === 'SELECT' ? 'change' : 'input';
-    field.addEventListener(eventName, () => {
-      validateField(field);
-    });
-    field.addEventListener('blur', () => {
-      validateField(field);
-    });
+    field.addEventListener(eventName, () => validateField(field));
+    field.addEventListener('blur', () => validateField(field));
   });
 
   form.addEventListener('submit', async (event) => {
@@ -225,45 +133,28 @@ function initContactForm(form: HTMLFormElement) {
     const { valid, firstInvalidField } = validateForm(form);
     if (!valid) {
       statusDiv.style.display = 'none';
-      if (firstInvalidField) {
-        firstInvalidField.reportValidity();
-      }
+      if (firstInvalidField) firstInvalidField.reportValidity();
       return;
     }
 
     submitBtn.disabled = true;
-    if (submitText) {
-      submitText.textContent = 'Submitting...';
-    } else {
-      submitBtn.textContent = 'Submitting...';
-    }
+    if (submitText) submitText.textContent = 'Submitting...';
+    else submitBtn.textContent = 'Submitting...';
     statusDiv.style.display = 'none';
 
     try {
       const fd = new FormData(form);
-      const payload = {
-        name: fd.get('name'),
-        email: fd.get('email'),
-        interest_slug: fd.get('subject'),
-        message: fd.get('message'),
-        ...getTrackingFields(),
-      };
-
-      const response = await fetch(`${apiBase}/api/v1/public/inquiries`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const params = new URLSearchParams({
+        'entry.285505795': (fd.get('name') as string) ?? '',
+        'entry.283005138': (fd.get('email') as string) ?? '',
+        'entry.154599738': (fd.get('subject') as string) ?? '',
+        'entry.1712408064': (fd.get('message') as string) ?? '',
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      await fetch(GOOGLE_FORM_URL, { method: 'POST', mode: 'no-cors', body: params });
 
       form.reset();
       fields.forEach(field => clearFieldError(field));
-      if (subjectSel) {
-        void loadInterestOptions(apiBase, subjectSel);
-      }
       statusDiv.textContent = 'Your inquiry has been received. The Cyberfyx team will review it shortly.';
       statusDiv.style.backgroundColor = 'rgba(236, 240, 238, 0.95)';
       statusDiv.style.color = '#1f2933';
@@ -280,11 +171,8 @@ function initContactForm(form: HTMLFormElement) {
       statusDiv.style.display = 'block';
     } finally {
       submitBtn.disabled = false;
-      if (submitText) {
-        submitText.textContent = defaultSubmitText;
-      } else {
-        submitBtn.textContent = defaultSubmitText;
-      }
+      if (submitText) submitText.textContent = defaultSubmitText;
+      else submitBtn.textContent = defaultSubmitText;
     }
   });
 }
@@ -293,7 +181,6 @@ function initContactForms() {
   const forms = Array.from(
     document.querySelectorAll('form[data-inquiry-form="public"], form#contact-form')
   ) as HTMLFormElement[];
-
   forms.forEach(form => initContactForm(form));
 }
 

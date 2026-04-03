@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchTrackData } from '../../lib/api';
 import { ENDPOINT_FALLBACK } from '../../lib/fallbacks';
 
-const track = (await fetchTrackData('endpoint-operations')) ?? ENDPOINT_FALLBACK;
-const rows = track.endpoint_rows.length > 0 ? track.endpoint_rows : ENDPOINT_FALLBACK.endpoint_rows;
+const track = ENDPOINT_FALLBACK;
+const rows = ENDPOINT_FALLBACK.endpoint_rows;
 ---
 
 <BaseLayout title="Smart Endpoint Management | Cyberfyx">
