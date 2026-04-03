@@ -1,5 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchTrackData } from '../../lib/api';
+import { ENDPOINT_FALLBACK } from '../../lib/fallbacks';
+
+const track = (await fetchTrackData('endpoint-operations')) ?? ENDPOINT_FALLBACK;
+const rows = track.endpoint_rows.length > 0 ? track.endpoint_rows : ENDPOINT_FALLBACK.endpoint_rows;
 ---
 
 <BaseLayout title="Smart Endpoint Management | Cyberfyx">
@@ -7,9 +12,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <div class="container">
       <div class="grid grid-2" style="align-items: center; gap: 4rem;">
         <div class="fade-up">
-          <h1 style="margin-bottom: 1.5rem;">Smart Endpoint Management</h1>
-          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">CYBERFYX is a trusted authorized solution partner of IPM+ Endpoint Management Solutions, empowering enterprises with intelligent and secure device management. We deliver seamless deployment, optimization, and compliance-driven control across all endpoints using IPM+'s powerful automation and analytics. Together, we help organizations enhance IT efficiency, reduce risks, and ensure enterprise-wide visibility and control.</p>
-
+          <h1 style="margin-bottom: 1.5rem;">{track.hero_title}</h1>
+          <p style="font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.8; color: var(--text-secondary);">{track.hero_body}</p>
         </div>
         <div class="glass-card fade-up delay-100" style="text-align: center; padding: 4rem;">
           <i class="fa-solid fa-laptop-code" style="font-size: 6rem; color: var(--accent-secondary);"></i>
@@ -23,62 +27,35 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <div class="section-header fade-up">
         <h2>Our <span class="text-gradient">Offerings</span></h2>
       </div>
-      
-      <div class="glass-card fade-up delay-100" style="padding: 0; overflow: hidden;">
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left; background: var(--bg-primary);">
-            <thead>
-              <tr style="background: var(--logo-text-primary); color: white;">
-                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Products</th>
-                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Solutions</th>
-                <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Services</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Unified Endpoint Management</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Endpoint Management Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Green Private Cloud (VPC)</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Unified Monitoring Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Industry 4.0 Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Enterprise Architecture Consulting</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ SmartDC</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Smart Buildings IoT Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Industry 4.0 Digital Transformation</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ SIEM</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Datacenter Management Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Efficient Data Centre Design</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Cloud</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">NOC Solutions</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">DR Service</td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1); background: rgba(128, 128, 128, 0.02);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">PowerMind AI</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Backup Solutions</td>
-                <td style="padding: 1.5rem;"></td>
-              </tr>
-              <tr style="border-bottom: 1px solid rgba(128, 128, 128, 0.1);">
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Backup Pro</td>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">Resource Monitoring Solutions</td>
-                <td style="padding: 1.5rem;"></td>
-              </tr>
-              <tr>
-                <td style="padding: 1.5rem; color: var(--text-secondary);">IPM+ Powerwise Pro</td>
-                <td style="padding: 1.5rem;"></td>
-                <td style="padding: 1.5rem;"></td>
-              </tr>
-            </tbody>
-          </table>
+
+      {rows.length > 0 ? (
+        <div class="glass-card fade-up delay-100" style="padding: 0; overflow: hidden;">
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; background: var(--bg-primary);">
+              <thead>
+                <tr style="background: var(--logo-text-primary); color: white;">
+                  <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Products</th>
+                  <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Solutions</th>
+                  <th style="padding: 1.5rem; font-size: 1.2rem; font-weight: 500;">Services</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, idx) => (
+                  <tr style={`border-bottom: 1px solid rgba(128, 128, 128, 0.1); ${idx % 2 === 1 ? 'background: rgba(128, 128, 128, 0.02);' : ''}`}>
+                    <td style="padding: 1.5rem; color: var(--text-secondary);">{row.product_name}</td>
+                    <td style="padding: 1.5rem; color: var(--text-secondary);">{row.solution_name}</td>
+                    <td style="padding: 1.5rem; color: var(--text-secondary);">{row.service_name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div class="glass-card fade-up" style="padding: 2rem; text-align: center;">
+          <p style="margin: 0; color: var(--text-secondary);">Offerings will be updated soon.</p>
+        </div>
+      )}
 
       <div style="text-align: center; margin-top: 3rem;">
         <a href="/services" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to All Services</a>

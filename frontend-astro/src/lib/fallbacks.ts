@@ -98,7 +98,56 @@ export const ENDPOINT_FALLBACK: SolutionTrackDetail = {
       taxonomy_terms: [],
     },
   ],
-  endpoint_rows: [],
+  endpoint_rows: [
+    {
+      product_name: 'IPM+ Unified Endpoint Management',
+      solution_name: 'Endpoint Management Solutions',
+      service_name: 'Green Private Cloud (VPC)',
+      display_order: 1,
+    },
+    {
+      product_name: 'IPM+ Unified Monitoring Solutions',
+      solution_name: 'Industry 4.0 Solutions',
+      service_name: 'Web Development',
+      display_order: 2,
+    },
+    {
+      product_name: 'IPM+ Asset Management',
+      solution_name: 'Secure AI on Premise Solutions',
+      service_name: 'Office 365 Migration',
+      display_order: 3,
+    },
+    {
+      product_name: 'IPM+ SIEM',
+      solution_name: 'Datacenter Management Solutions',
+      service_name: 'Efficient Data Centre Design',
+      display_order: 4,
+    },
+    {
+      product_name: 'IPM+ Cloud',
+      solution_name: 'NOC Solutions',
+      service_name: 'DR Service',
+      display_order: 5,
+    },
+    {
+      product_name: 'PowerMind AI',
+      solution_name: 'Backup Solutions',
+      service_name: '',
+      display_order: 6,
+    },
+    {
+      product_name: 'IPM+ Backup Pro',
+      solution_name: 'Resource Monitoring Solutions',
+      service_name: '',
+      display_order: 7,
+    },
+    {
+      product_name: 'IPM+ Powerwise Pro',
+      solution_name: '',
+      service_name: '',
+      display_order: 8,
+    },
+  ],
 };
 
 export const CORE_INDUSTRY_FALLBACK: SolutionTrackDetail = {
