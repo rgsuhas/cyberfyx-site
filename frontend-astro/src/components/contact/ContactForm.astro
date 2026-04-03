@@ -34,15 +34,26 @@ const { interestOptions = [] } = Astro.props;
     </div>
 
     <div class="cf-field cf-select-field">
-      <select id="subject" name="subject" class="cf-input cf-select" required>
+      <!-- Native select: hidden but participates in FormData + validation -->
+      <select id="subject" name="subject" class="cf-select-native" required tabindex="-1" aria-hidden="true">
         <option value="" disabled selected></option>
         {interestOptions.map((opt) => (
           <option value={opt.slug}>{opt.label}</option>
         ))}
       </select>
-      <label for="subject" class="cf-label">Service Interested In</label>
+
+      <!-- Custom styled dropdown -->
+      <div class="cf-custom-select" tabindex="0" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-label="Service Interested In">
+        <span class="cf-custom-select-display"></span>
+        <i class="fa-solid fa-chevron-down cf-select-icon"></i>
+        <ul class="cf-custom-select-options" role="listbox">
+          {interestOptions.map((opt) => (
+            <li class="cf-custom-select-option" role="option" data-value={opt.slug}>{opt.label}</li>
+          ))}
+        </ul>
+      </div>
+      <label class="cf-label cf-select-label">Service Interested In</label>
       <span class="cf-bar"></span>
-      <i class="fa-solid fa-chevron-down cf-select-icon"></i>
     </div>
 
     <div class="cf-field">
@@ -185,36 +196,169 @@ const { interestOptions = [] } = Astro.props;
     line-height: 1.6;
   }
 
-  /* Select field */
+  /* ── Custom select ─────────────────────────────────────── */
+
+  /* Hide the native select but keep it functional for FormData */
+  .cf-select-native {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    tabindex: -1;
+  }
+
   .cf-select-field {
     position: relative;
   }
 
-  .cf-select {
+  /* Trigger row: same underline style as text inputs */
+  .cf-custom-select {
+    position: relative;
+    width: 100%;
+    padding: 1.1rem 2rem 0.45rem 0.25rem;
+    border-bottom: 1.5px solid var(--border-glass);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 0.97rem;
     cursor: pointer;
-    padding-right: 2rem;
-    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.25s ease;
+    min-height: 2.9rem;
+    user-select: none;
   }
 
-  .cf-select option {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+  .cf-custom-select:focus,
+  .cf-custom-select.open {
+    border-bottom-color: var(--logo-text-primary);
   }
 
+  .cf-field.field-has-error .cf-custom-select {
+    border-bottom-color: var(--accent-tertiary);
+  }
+
+  .cf-field.field-has-error .cf-select-label {
+    color: var(--accent-tertiary);
+  }
+
+  /* Float label when value chosen or dropdown open */
+  .cf-custom-select.has-value ~ .cf-select-label,
+  .cf-custom-select.open ~ .cf-select-label {
+    transform: translateY(-1.1rem) scale(0.8);
+    color: var(--logo-text-accent);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* Bar when open or focused */
+  .cf-custom-select:focus ~ .cf-bar,
+  .cf-custom-select.open ~ .cf-bar {
+    width: 100%;
+  }
+
+  /* Chevron icon */
   .cf-select-icon {
     position: absolute;
     right: 0.5rem;
-    top: 1.05rem;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 0.7rem;
     color: var(--text-muted);
     pointer-events: none;
-    transition: transform 0.2s ease;
+    transition: transform 0.22s ease, color 0.2s ease;
   }
 
-  .cf-select:focus ~ .cf-label ~ .cf-bar ~ .cf-select-icon,
-  .cf-select:focus ~ .cf-select-icon {
-    transform: rotate(180deg);
+  .cf-custom-select.open .cf-select-icon {
+    transform: translateY(-50%) rotate(180deg);
     color: var(--logo-text-primary);
+  }
+
+  /* Display text inside trigger */
+  .cf-custom-select-display {
+    display: block;
+    min-height: 1.2em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Options panel */
+  .cf-custom-select-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: 0.75rem;
+    list-style: none;
+    padding: 0.35rem 0;
+    margin: 0;
+    z-index: 200;
+    box-shadow: 0 8px 28px rgba(53, 29, 117, 0.13), 0 2px 8px rgba(0, 0, 0, 0.06);
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    max-height: 230px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-glass) transparent;
+  }
+
+  .cf-custom-select.open .cf-custom-select-options {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Option items */
+  .cf-custom-select-option {
+    padding: 0.65rem 1rem;
+    font-size: 0.93rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cf-custom-select-option:hover,
+  .cf-custom-select-option.focused {
+    background: rgba(53, 29, 117, 0.06);
+    color: var(--logo-text-primary);
+  }
+
+  .cf-custom-select-option.selected {
+    color: var(--logo-text-primary);
+    font-weight: 600;
+    background: rgba(53, 29, 117, 0.04);
+  }
+
+  .cf-custom-select-option.selected::after {
+    content: '\f00c'; /* fa-check */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.72rem;
+    margin-left: auto;
+    color: var(--logo-text-accent);
+  }
+
+  /* Dark mode overrides */
+  [data-theme="dark"] .cf-custom-select-options {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  [data-theme="dark"] .cf-custom-select-option:hover,
+  [data-theme="dark"] .cf-custom-select-option.focused {
+    background: rgba(150, 120, 220, 0.1);
+  }
+
+  [data-theme="dark"] .cf-custom-select-option.selected {
+    background: rgba(150, 120, 220, 0.07);
   }
 
   .form-warning {
@@ -278,3 +422,116 @@ const { interestOptions = [] } = Astro.props;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 </style>
+
+<script>
+  function initCustomSelects() {
+    document.querySelectorAll<HTMLElement>('.cf-select-field:not([data-cs-init])').forEach(field => {
+      field.dataset.csInit = '1';
+
+      const nativeSelect = field.querySelector<HTMLSelectElement>('.cf-select-native');
+      const customSelect = field.querySelector<HTMLElement>('.cf-custom-select');
+      const display = field.querySelector<HTMLElement>('.cf-custom-select-display');
+      const optsList = field.querySelector<HTMLElement>('.cf-custom-select-options');
+
+      if (!nativeSelect || !customSelect || !display || !optsList) return;
+
+      function buildOptions() {
+        if (!optsList || !nativeSelect) return;
+        optsList.innerHTML = '';
+        Array.from(nativeSelect.options).forEach(opt => {
+          if (!opt.value) return;
+          const li = document.createElement('li');
+          li.className = 'cf-custom-select-option';
+          li.setAttribute('role', 'option');
+          li.dataset.value = opt.value;
+          li.textContent = opt.text;
+          if (opt.value === nativeSelect.value) li.classList.add('selected');
+          optsList.appendChild(li);
+        });
+      }
+
+      function open() {
+        customSelect!.classList.add('open');
+        customSelect!.setAttribute('aria-expanded', 'true');
+      }
+
+      function close() {
+        customSelect!.classList.remove('open');
+        customSelect!.setAttribute('aria-expanded', 'false');
+        optsList!.querySelectorAll('.cf-custom-select-option').forEach(o => o.classList.remove('focused'));
+      }
+
+      function pick(value: string, text: string) {
+        if (!nativeSelect || !display || !optsList) return;
+        nativeSelect.value = value;
+        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        display.textContent = text;
+        customSelect!.classList.add('has-value');
+        optsList.querySelectorAll<HTMLElement>('.cf-custom-select-option').forEach(li => {
+          li.classList.toggle('selected', li.dataset.value === value);
+        });
+        close();
+      }
+
+      buildOptions();
+
+      // Rebuild options when contact-form.ts repopulates the native select from API
+      new MutationObserver(buildOptions).observe(nativeSelect, { childList: true });
+
+      // Reset on form reset
+      nativeSelect.closest('form')?.addEventListener('reset', () => {
+        if (!display || !customSelect || !optsList) return;
+        display.textContent = '';
+        customSelect.classList.remove('has-value');
+        optsList.querySelectorAll('.cf-custom-select-option').forEach(li => li.classList.remove('selected'));
+      });
+
+      customSelect.addEventListener('click', (e: MouseEvent) => {
+        const opt = (e.target as HTMLElement).closest<HTMLElement>('.cf-custom-select-option');
+        if (opt?.dataset.value) {
+          pick(opt.dataset.value, opt.textContent ?? '');
+          return;
+        }
+        customSelect.classList.contains('open') ? close() : open();
+      });
+
+      document.addEventListener('click', (e: MouseEvent) => {
+        if (!customSelect.contains(e.target as Node)) close();
+      });
+
+      customSelect.addEventListener('keydown', (e: KeyboardEvent) => {
+        const opts = Array.from(optsList!.querySelectorAll<HTMLElement>('.cf-custom-select-option'));
+
+        if (e.key === ' ') {
+          e.preventDefault();
+          customSelect.classList.contains('open') ? close() : open();
+          return;
+        }
+
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (!customSelect.classList.contains('open')) { open(); return; }
+          const focused = optsList!.querySelector<HTMLElement>('.cf-custom-select-option.focused');
+          if (focused?.dataset.value) pick(focused.dataset.value, focused.textContent ?? '');
+          return;
+        }
+
+        if (e.key === 'Escape') { close(); return; }
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!customSelect.classList.contains('open')) open();
+          const cur = optsList!.querySelector<HTMLElement>('.cf-custom-select-option.focused');
+          let idx = cur ? opts.indexOf(cur) : -1;
+          opts.forEach(o => o.classList.remove('focused'));
+          idx = e.key === 'ArrowDown' ? Math.min(idx + 1, opts.length - 1) : Math.max(idx - 1, 0);
+          opts[idx]?.classList.add('focused');
+          opts[idx]?.scrollIntoView({ block: 'nearest' });
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initCustomSelects);
+  document.addEventListener('astro:page-load', initCustomSelects);
+</script>
