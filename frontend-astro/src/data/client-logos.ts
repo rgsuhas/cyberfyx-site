@@ -123,5 +123,5 @@ export const clientLogoGroups = logoGroups.map(group => ({
   logos: group.files.map(fileName => createLogo(group.folder, fileName)),
 }));
 
-export const cybersecurityClientLogos = clientLogoGroups[0]?.logos ?? [];
-export const endpointClientLogos = clientLogoGroups[1]?.logos ?? [];
+export const cybersecurityClientLogos = clientLogoGroups.find(g => g.folder === 'cybersecurity-clients')?.logos ?? [];
+export const endpointClientLogos = clientLogoGroups.find(g => g.folder === 'endpoint-clients')?.logos ?? [];
