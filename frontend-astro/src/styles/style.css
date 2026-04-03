@@ -1034,17 +1034,6 @@ section {
   justify-content: center;
 }
 
-.industry-card i {
-  font-size: 3rem;
-  color: var(--logo-text-primary);
-  margin-bottom: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.industry-card:hover i {
-  transform: scale(1.1) translateY(-10px);
-  color: var(--logo-text-secondary);
-}
 
 .industries-cta-card {
   display: flex;
