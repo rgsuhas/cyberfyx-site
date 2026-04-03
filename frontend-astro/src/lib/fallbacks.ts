@@ -179,5 +179,42 @@ export const CONTACT_PROFILE_FALLBACK: ContactProfile = {
     { slug: 'philippines', label: 'Philippines', display_order: 3 },
     { slug: 'dubai', label: 'Dubai', display_order: 4 },
   ],
-  interest_options: [],
+  interest_options: [
+    {
+      slug: 'cybersecurity-services',
+      label: 'Cybersecurity',
+      route_target: '/services/cybersecurity',
+      display_order: 1,
+    },
+    {
+      slug: 'it-security-and-continuity',
+      label: 'IT Security',
+      route_target: '/services/it-security',
+      display_order: 2,
+    },
+    {
+      slug: 'endpoint-management-services',
+      label: 'Endpoint Management',
+      route_target: '/services/endpoint-management',
+      display_order: 3,
+    },
+    {
+      slug: 'core-industry-services',
+      label: 'Core Industry Services',
+      route_target: '/services/core-industry',
+      display_order: 4,
+    },
+    {
+      slug: 'training',
+      label: 'Training',
+      route_target: '/services/training',
+      display_order: 5,
+    },
+    {
+      slug: 'general-inquiry',
+      label: 'General Inquiry',
+      route_target: '/contact',
+      display_order: 6,
+    },
+  ],
 };

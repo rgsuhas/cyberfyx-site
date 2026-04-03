@@ -3,25 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GlassCard from '../components/GlassCard.astro';
 import ContactForm from '../components/contact/ContactForm.astro';
 import { fetchContactProfile } from '../lib/api';
+import { CONTACT_PROFILE_FALLBACK } from '../lib/fallbacks';
 
 void GlassCard;
 
-const FALLBACK_CONTACT = {
-  sales_email: 'sales@cyberfyx.net',
-  primary_phone: '+91 9663410308',
-  headquarters_address: 'Janardhana Towers, Ashok Nagar, Bengaluru 560025',
-  map_url: 'https://maps.google.com/?q=Janardhana+Towers+Ashok+Nagar+Bengaluru+560025',
-  interest_options: [
-    { slug: 'cybersecurity-services', label: 'Cybersecurity' },
-    { slug: 'it-security-and-continuity', label: 'IT Security' },
-    { slug: 'endpoint-management-services', label: 'Endpoint Management' },
-    { slug: 'core-industry-services', label: 'Core Industry Services' },
-    { slug: 'training', label: 'Training' },
-    { slug: 'general-inquiry', label: 'General Inquiry' },
-  ],
-};
-
-const profile = (await fetchContactProfile()) ?? FALLBACK_CONTACT;
+const profile = (await fetchContactProfile()) ?? CONTACT_PROFILE_FALLBACK;
 const telHref = `tel:${profile.primary_phone.replace(/[^+\d]/g, '')}`;
 ---
 
